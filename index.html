@@ -50,8 +50,8 @@
           <div class="photo-placeholder" aria-hidden="true">Photo</div>
         </div>
         <div class="hero-text">
-          <h1>[PLACEHOLDER: Your Name]</h1>
-          <p class="tagline">3rd year Electrical &amp; Computer Engineering student at UCT</p>
+          <h1>Alex Hillman</h1>
+          <p class="tagline">Final year Electrical &amp; Computer Engineering student at UCT</p>
           <p class="hero-intro">
             [PLACEHOLDER: One short introductory paragraph — who you are, what you're
             interested in, and what kind of work or opportunities you're looking for.]
@@ -105,8 +105,21 @@
               <div class="image-placeholder" aria-hidden="true">Image</div>
             </div>
             <div class="project-body">
-              <h3 class="project-title">[PLACEHOLDER: Project Title]</h3>
-              <p class="project-desc">[PLACEHOLDER: One to two sentence description of what the project does and why you built it.]</p>
+              <h3 class="project-title">Radar-Driven Interactive 3D LED CUBE</h3>
+              <p class="project-desc"># Radar-Driven Interactive 3D LED Cube
+
+This project began as part of an experimental art installation combining radar, music, sound design and visual electronics. The original brief was to develop the circuitry required to control a freeform soldered LED display, potentially using shift registers to independently control the LEDs. I developed this concept into a fully interactive 3D LED cube that uses radar to track a person's position and translate their movement into a visual game.
+
+The display consists of a **3×3×3 RGB LED cube**, controlled by an ESP32 and four 74HC595 shift registers. Because the number of LEDs and control signals exceeds the available GPIO pins, the LED cube uses **multiplexing**: the ESP32 rapidly switches between the three layers of the cube while controlling the RGB colour channels through the shift registers. This allowed 27 RGB voxels to be controlled using a relatively small number of microcontroller pins.
+
+A **60 GHz radar sensor** provides the interactive input. The ESP32 receives the radar's positional data over UART, decodes the transmitted frames and converts the detected person's position into a discrete location within the cube. I implemented position mapping and hysteresis so that movement between the different regions is stable despite small fluctuations in the radar measurements. I also had to account for the physical orientation of the radar and correct the coordinate system so that left and right movement corresponded intuitively to the physical display.
+
+I then developed a **Simon Says-style interactive game** around the LED cube. At the beginning of each round, the system selects one of the three planes of the cube and displays a target position using a flashing green LED. The player must physically move to the corresponding position while the radar continuously tracks them. The two unused planes display a nine-second visual countdown using accumulating red LEDs, providing the player with an indication of how much time remains.
+
+The game includes several visual feedback and state transitions. Successfully reaching the target produces a flashing green celebration, while failing to reach it within the allotted time produces a red flashing sequence and decreases the score. The current score is displayed on one face of the cube using the LEDs as a 3×3 counter. When the player reaches ten points, the cube performs a larger centre-outward firework animation before resetting the game and starting a new sequence.
+
+The project therefore developed from a basic hardware-control problem into a complete **embedded interactive system**, combining digital electronics, serial communication, radar signal interpretation, real-time position tracking, multiplexed LED control, animation design and finite-state-machine-based game logic. The result is a physical interface in which the user's movement becomes both the input to the game and part of the visual performance, providing a foundation that could later be integrated with the planned musical and sound-design elements of the installation.
+</p>
               <ul class="tech-tags">
                 <li class="tag">[Tech]</li>
                 <li class="tag">[Tech]</li>
