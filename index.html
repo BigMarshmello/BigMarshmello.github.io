@@ -160,11 +160,19 @@ I built this because the gap between a working sensor and a deployable field ins
           <!-- PROJECT CARD TEMPLATE 3 -->
           <article class="project-card">
             <div class="project-image">
-              <div class="image-placeholder" aria-hidden="true">Image</div>
+              <img src="img/project3.jpg" alt="TheShiftRosterBot screenshot" class="project-photo">
             </div>
             <div class="project-body">
-              <h3 class="project-title">[PLACEHOLDER: Project Title]</h3>
-              <p class="project-desc">[PLACEHOLDER: One to two sentence description of what the project does and why you built it.]</p>
+              <h3 class="project-title">TheShiftRosterBot: A Multi-Tenant Scheduling Platform for Delivery Operations</h3>
+              <p class="project-desc">I built and operate a production Telegram-based scheduling system for a delivery operation I manage in Cape Town, coordinating shifts for 30+ drivers across two independently-configured business branches.
+
+Before this system, scheduling was manual — no visibility into coverage gaps, no fair enforcement of shift rules, no audit trail. I built a bot (Python, SQLite, running on a Raspberry Pi) that handles driver self-service shift submission, live coverage tracking, first-come-first-served shift claiming, cover requests, automated reminders, and admin tooling for approvals and exports.
+
+The main technical challenge came when I took on a second branch with fundamentally different rules — a different rostering cycle, different thresholds, and drivers picking specific dates instead of a weekly pattern. Rather than duplicate the codebase, I redesigned the system into a multi-tenant architecture: one application serving multiple branches, each with its own database and configurable ruleset, sharing a common scheduling engine. This meant extracting core logic into pure, tested functions and generalising concepts I'd originally hardcoded for a single use case.
+
+As the system matured, I adopted stronger engineering practices: staged and independently testable migrations, a shared test suite to catch logic drift between the main bot and a companion checklist bot, a full architectural review to find and fix security and data-integrity issues, and proper deployment discipline (version control, scripted deploys with verification, automated backups) after diagnosing incidents caused by uncertainty about what code was actually live.
+
+I built this because I run the operation myself and needed tooling that matched real business needs rather than a rigid off-the-shelf product — and because scaling it correctly to a second branch became a genuine exercise in production software engineering, not just a scripting project.</p>
               <ul class="tech-tags">
                 <li class="tag">[Tech]</li>
                 <li class="tag">[Tech]</li>
