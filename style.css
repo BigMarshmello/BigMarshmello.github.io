@@ -11,8 +11,7 @@ html {
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  font-family: var(--font-sans);
   color: var(--color-text);
   background: var(--color-bg);
   line-height: 1.6;
@@ -48,9 +47,16 @@ h1, h2, h3, p {
   --color-text: #1a1d23;
   --color-text-muted: #5b6270;
   --color-border: #e4e6ea;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: #eaf0fe;
+  --color-accent: #ffb000;
+  --color-accent-hover: #e6a000;
+  --color-accent-soft: #fff4e0;
+  /* darker on-brand amber for text on light backgrounds — #ffb000 itself fails WCAG contrast as text */
+  --color-accent-text: #a35d00;
+
+  --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", Menlo,
+    Consolas, "Liberation Mono", monospace;
 
   --max-width: 1100px;
   --radius: 10px;
@@ -74,9 +80,22 @@ h1, h2, h3, p {
 }
 
 .section-title {
+  position: relative;
+  padding-left: var(--space-2);
   font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: var(--space-1);
+}
+
+.section-title::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.15em;
+  bottom: 0.15em;
+  width: 4px;
+  background: var(--color-accent);
+  border-radius: 2px;
 }
 
 .section-subtitle {
@@ -180,12 +199,14 @@ h1, h2, h3, p {
 }
 
 .nav-link {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
   font-weight: 500;
   padding: var(--space-1);
 }
 
 .nav-link:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .nav-social {
@@ -203,7 +224,7 @@ h1, h2, h3, p {
 }
 
 .icon-link:hover {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   transform: translateY(-1px);
 }
 
@@ -259,10 +280,11 @@ h1, h2, h3, p {
 
 .photo-placeholder {
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-mono);
   font-size: 0.9rem;
   font-weight: 600;
 }
@@ -279,7 +301,7 @@ h1, h2, h3, p {
 }
 
 .tagline {
-  color: var(--color-accent);
+  color: var(--color-accent-text);
   font-weight: 600;
   margin-top: var(--space-1);
 }
@@ -330,7 +352,7 @@ h1, h2, h3, p {
 
 .btn-primary {
   background: var(--color-accent);
-  color: #fff;
+  color: var(--color-text);
 }
 
 .btn-primary:hover {
@@ -345,7 +367,7 @@ h1, h2, h3, p {
 
 .btn-secondary:hover {
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* =====================================================================
@@ -406,6 +428,7 @@ h1, h2, h3, p {
   align-items: center;
   justify-content: center;
   color: var(--color-text-muted);
+  font-family: var(--font-mono);
   font-size: 0.85rem;
 }
 
@@ -444,7 +467,8 @@ h1, h2, h3, p {
 
 .tag {
   background: var(--color-accent-soft);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 600;
   padding: 0.25rem 0.6rem;
@@ -470,6 +494,7 @@ h1, h2, h3, p {
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text);
@@ -479,7 +504,7 @@ h1, h2, h3, p {
 
 .skill-tag:hover {
   border-color: var(--color-accent);
-  color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* =====================================================================
