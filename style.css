@@ -582,11 +582,18 @@ h1, h2, h3, p {
   display: grid;
   grid-template-columns: 1fr;
   gap: var(--space-3);
+  /* let each card size to its own content instead of stretching to match its row-mate */
+  align-items: start;
 }
 
 @media (min-width: 640px) {
   .project-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* offset the right column down slightly for a staggered, less uniform rhythm */
+  .project-card:nth-child(2n) {
+    margin-top: var(--space-4);
   }
 }
 
@@ -1013,4 +1020,37 @@ body.custom-cursor-active * {
   z-index: 10000;
   pointer-events: none;
   transition: width 0.1s ease-out;
+}
+
+/* =====================================================================
+   15. SCROLL-IN REVEAL
+   ===================================================================== */
+/* Uses `animation`, not `transition`, deliberately — several revealed
+   elements (e.g. .project-card) already have their own hover `transition`
+   on `transform`; sharing that property via `transition` here would let
+   whichever rule is later clobber the other's timing. Animation is a
+   separate mechanism, so it can't collide with hover transitions. */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+}
+
+.reveal.is-visible {
+  animation: reveal-in 0.6s ease forwards;
+  animation-delay: var(--reveal-delay, 0s);
+}
+
+.skill-point.reveal {
+  transform-box: view-box;
+}
+
+@keyframes reveal-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

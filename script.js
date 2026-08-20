@@ -152,6 +152,62 @@ function initScrollProgress() {
   update();
 }
 
+// Fades + slides each section's content up into place as it enters the
+// viewport. Grouped items (project cards, skill points) get a small
+// incremental delay so they cascade in rather than popping simultaneously.
+function initScrollReveal() {
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (prefersReducedMotion || !("IntersectionObserver" in window)) return;
+
+  const STAGGER_MS = 80;
+  const targets = [];
+
+  function addGroup(elements) {
+    elements.filter(Boolean).forEach((el, i) => {
+      el.classList.add("reveal");
+      el.style.setProperty("--reveal-delay", `${i * STAGGER_MS}ms`);
+      targets.push(el);
+    });
+  }
+
+  addGroup([document.querySelector(".hero-content")]);
+  addGroup([
+    document.querySelector(".about .section-title"),
+    document.querySelector(".about-content"),
+  ]);
+  addGroup([
+    document.querySelector(".projects .section-title"),
+    document.querySelector(".projects .section-subtitle"),
+    document.querySelector(".project-filters"),
+  ]);
+  addGroup(Array.from(document.querySelectorAll(".project-card")));
+  addGroup([document.querySelector(".skills .section-title")]);
+  addGroup(Array.from(document.querySelectorAll(".skill-point")));
+  addGroup([
+    document.querySelector(".contact .section-title"),
+    document.querySelector(".contact .section-subtitle"),
+    document.querySelector(".contact-links"),
+  ]);
+
+  if (!targets.length) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.15, rootMargin: "0px 0px -40px 0px" }
+  );
+
+  targets.forEach((el) => observer.observe(el));
+}
+
 // Mobile nav toggle + smooth-scroll close-on-click + footer year.
 document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.getElementById("navToggle");
@@ -211,4 +267,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initCustomCursor();
   initScrollProgress();
+  initScrollReveal();
 });

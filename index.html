@@ -233,26 +233,24 @@ I'm characterizing the chamber's hydrodynamics — pressure gradients under diff
         <h2 class="section-title">Skills</h2>
 
         <!--
-          PLACEHOLDER: edit/reorder skills below. There are 8 fixed points around the
-          circle (one every 45°, starting at the top and going clockwise). Each skill
+          PLACEHOLDER: edit/reorder skills below. There are 6 fixed points around the
+          circle (one every 60°, starting at the top and going clockwise). Each skill
           needs a <g class="skill-point"> with a dot + a label. For a label longer than
           one short word, split it across two <tspan> lines like "Embedded Systems"
           below so it doesn't run into its neighbor. The plain <ul> further down is a
           screen-reader-only fallback list — keep it in sync with the chart.
         -->
-        <svg class="skills-radar" viewBox="0 0 400 400" role="img" aria-label="Skills: C, Python, Verilog, Embedded Systems, Git, MATLAB, Circuit Design, Linux">
+        <svg class="skills-radar" viewBox="0 0 400 400" role="img" aria-label="Skills: C, Python, Verilog, Embedded Systems, MATLAB, Circuit Design">
           <circle class="radar-grid-ring" cx="200" cy="200" r="37" />
           <circle class="radar-grid-ring" cx="200" cy="200" r="74" />
           <circle class="radar-grid-ring" cx="200" cy="200" r="110" />
 
           <line class="radar-grid-spoke" x1="200" y1="200" x2="200" y2="90" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="277.78" y2="122.22" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="310" y2="200" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="277.78" y2="277.78" />
+          <line class="radar-grid-spoke" x1="200" y1="200" x2="295.26" y2="145" />
+          <line class="radar-grid-spoke" x1="200" y1="200" x2="295.26" y2="255" />
           <line class="radar-grid-spoke" x1="200" y1="200" x2="200" y2="310" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="122.22" y2="277.78" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="90" y2="200" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="122.22" y2="122.22" />
+          <line class="radar-grid-spoke" x1="200" y1="200" x2="104.74" y2="255" />
+          <line class="radar-grid-spoke" x1="200" y1="200" x2="104.74" y2="145" />
 
           <path class="skill-sweep" d="M200,200 L200,90 A110,110 0 0,1 251.6,102.9 Z" />
 
@@ -261,38 +259,30 @@ I'm characterizing the chamber's hydrodynamics — pressure gradients under diff
             <text class="skill-label" x="200" y="54" text-anchor="middle">C</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="277.78" cy="122.22" r="5" />
-            <text class="skill-label" x="297.6" y="102.4" text-anchor="start">Python</text>
+            <circle class="skill-dot" cx="295.26" cy="145" r="5" />
+            <text class="skill-label" x="319.5" y="131" text-anchor="start">Python</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="310" cy="200" r="5" />
-            <text class="skill-label" x="338" y="200" text-anchor="start" dominant-baseline="middle">Verilog</text>
-          </g>
-          <g class="skill-point">
-            <circle class="skill-dot" cx="277.78" cy="277.78" r="5" />
-            <text class="skill-label" x="297.6" y="297.6" text-anchor="start">
-              <tspan x="297.6" dy="0">Embedded</tspan>
-              <tspan x="297.6" dy="15">Systems</tspan>
-            </text>
+            <circle class="skill-dot" cx="295.26" cy="255" r="5" />
+            <text class="skill-label" x="319.5" y="269" text-anchor="start">Verilog</text>
           </g>
           <g class="skill-point">
             <circle class="skill-dot" cx="200" cy="310" r="5" />
-            <text class="skill-label" x="200" y="338" text-anchor="middle">Git</text>
-          </g>
-          <g class="skill-point">
-            <circle class="skill-dot" cx="122.22" cy="277.78" r="5" />
-            <text class="skill-label" x="102.4" y="297.6" text-anchor="end">MATLAB</text>
-          </g>
-          <g class="skill-point">
-            <circle class="skill-dot" cx="90" cy="200" r="5" />
-            <text class="skill-label" x="62" y="200" text-anchor="end" dominant-baseline="middle">
-              <tspan x="62" dy="0">Circuit</tspan>
-              <tspan x="62" dy="15">Design</tspan>
+            <text class="skill-label" x="200" y="338" text-anchor="middle">
+              <tspan x="200" dy="0">Embedded</tspan>
+              <tspan x="200" dy="15">Systems</tspan>
             </text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="122.22" cy="122.22" r="5" />
-            <text class="skill-label" x="102.4" y="102.4" text-anchor="end">Linux</text>
+            <circle class="skill-dot" cx="104.74" cy="255" r="5" />
+            <text class="skill-label" x="80.5" y="269" text-anchor="end">MATLAB</text>
+          </g>
+          <g class="skill-point">
+            <circle class="skill-dot" cx="104.74" cy="145" r="5" />
+            <text class="skill-label" x="80.5" y="131" text-anchor="end">
+              <tspan x="80.5" dy="0">Circuit</tspan>
+              <tspan x="80.5" dy="15">Design</tspan>
+            </text>
           </g>
         </svg>
 
@@ -301,10 +291,8 @@ I'm characterizing the chamber's hydrodynamics — pressure gradients under diff
           <li>Python</li>
           <li>Verilog</li>
           <li>Embedded Systems</li>
-          <li>Git</li>
           <li>MATLAB</li>
           <li>Circuit Design</li>
-          <li>Linux</li>
         </ul>
       </div>
     </section>
