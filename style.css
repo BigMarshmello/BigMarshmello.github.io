@@ -251,11 +251,75 @@ h1, h2, h3, p {
    4. HERO
    ===================================================================== */
 .hero {
+  position: relative;
+  overflow: hidden;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-bg-alt);
 }
 
+/* radar grid rings, centered behind the hero content */
+.hero::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: repeating-radial-gradient(
+    circle,
+    rgba(163, 93, 0, 0.10) 0,
+    rgba(163, 93, 0, 0.10) 1px,
+    transparent 1px,
+    transparent 64px
+  );
+  pointer-events: none;
+}
+
+/* rotating radar sweep beam */
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  transform: translate(-50%, -50%) rotate(0deg);
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    rgba(255, 176, 0, 0.20),
+    transparent 10%,
+    transparent 100%
+  );
+  animation: radar-sweep 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-sweep {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero::after {
+    animation: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .hero::before,
+  .hero::after {
+    width: 420px;
+    height: 420px;
+  }
+}
+
 .hero-content {
+  position: relative;
+  z-index: 1;
   max-width: var(--max-width);
   margin: 0 auto;
   padding: var(--space-5) var(--space-3);
@@ -302,8 +366,32 @@ h1, h2, h3, p {
 
 .tagline {
   color: var(--color-accent-text);
+  font-family: var(--font-mono);
   font-weight: 600;
   margin-top: var(--space-1);
+}
+
+.tagline::after {
+  content: "";
+  display: inline-block;
+  width: 0.5em;
+  height: 1em;
+  margin-left: 0.15em;
+  background: currentColor;
+  vertical-align: -0.15em;
+  animation: blink-cursor 1s steps(1) infinite;
+}
+
+@keyframes blink-cursor {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tagline::after {
+    animation: none;
+  }
 }
 
 .hero-intro {
