@@ -251,15 +251,17 @@ h1, h2, h3, p {
 /* =====================================================================
    4. HERO
    ===================================================================== */
-.hero {
+.hero,
+.error-hero {
   position: relative;
   overflow: hidden;
   border-bottom: 1px solid var(--color-border);
   background: var(--color-bg-alt);
 }
 
-/* radar grid rings, centered behind the hero content */
-.hero::before {
+/* radar grid rings, centered behind the hero content — also reused by the 404 page */
+.hero::before,
+.error-hero::before {
   content: "";
   position: absolute;
   top: 50%;
@@ -279,7 +281,8 @@ h1, h2, h3, p {
 }
 
 /* rotating radar sweep beam */
-.hero::after {
+.hero::after,
+.error-hero::after {
   content: "";
   position: absolute;
   top: 50%;
@@ -305,14 +308,17 @@ h1, h2, h3, p {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero::after {
+  .hero::after,
+  .error-hero::after {
     animation: none;
   }
 }
 
 @media (max-width: 767px) {
   .hero::before,
-  .hero::after {
+  .hero::after,
+  .error-hero::before,
+  .error-hero::after {
     width: 420px;
     height: 420px;
   }
@@ -776,4 +782,114 @@ h1, h2, h3, p {
   background: var(--color-bg-alt);
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
+}
+
+/* =====================================================================
+   12. 404 PAGE
+   ===================================================================== */
+.error-hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: none;
+}
+
+/* CRT-style scanline/static overlay */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05) 0px,
+    rgba(0, 0, 0, 0.05) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  animation: noise-scroll 0.6s steps(4) infinite;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@keyframes noise-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 0 8px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .noise-overlay {
+    animation: none;
+  }
+}
+
+.error-content {
+  position: relative;
+  z-index: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: var(--space-3);
+  text-align: center;
+}
+
+.error-code {
+  font-family: var(--font-mono);
+  font-size: clamp(4rem, 18vw, 8rem);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-text);
+  animation: glitch-jitter 3.5s infinite;
+}
+
+@keyframes glitch-jitter {
+  0%,
+  92%,
+  100% {
+    text-shadow: none;
+    transform: translate(0, 0);
+  }
+  93% {
+    text-shadow: 2px 0 var(--color-blip), -2px 0 var(--color-accent);
+    transform: translate(-1px, 0);
+  }
+  94% {
+    text-shadow: -2px 0 var(--color-blip), 2px 0 var(--color-accent);
+    transform: translate(1px, 0);
+  }
+  95% {
+    text-shadow: 1px 0 var(--color-blip), -1px 0 var(--color-accent);
+    transform: translate(0, 1px);
+  }
+  96%,
+  100% {
+    text-shadow: none;
+    transform: translate(0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .error-code {
+    animation: none;
+  }
+}
+
+.error-title {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-accent-text);
+  margin-top: var(--space-2);
+  letter-spacing: 0.02em;
+}
+
+.error-message {
+  color: var(--color-text-muted);
+  margin-top: var(--space-2);
+}
+
+.error-content .btn {
+  margin-top: var(--space-3);
 }
