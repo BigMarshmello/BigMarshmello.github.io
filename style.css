@@ -418,17 +418,9 @@ h1, h2, h3, p {
 }
 
 .hero-text h1 {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.6rem;
   font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.02em;
-}
-
-.hero-text h1 .brand-mark {
-  width: 34px;
-  height: 34px;
 }
 
 .tagline {
