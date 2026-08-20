@@ -23,6 +23,20 @@ function startRadarBlips(container) {
   })();
 }
 
+// Types out the tagline's existing text once, character by character.
+function typeOnce(el, speed = 45) {
+  const text = el.textContent;
+  el.textContent = "";
+  let i = 0;
+  (function tick() {
+    i++;
+    el.textContent = text.slice(0, i);
+    if (i < text.length) {
+      setTimeout(tick, speed);
+    }
+  })();
+}
+
 // Mobile nav toggle + smooth-scroll close-on-click + footer year.
 document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.getElementById("navToggle");
@@ -47,10 +61,16 @@ document.addEventListener("DOMContentLoaded", () => {
     yearEl.textContent = new Date().getFullYear();
   }
 
-  const radarBlips = document.getElementById("radarBlips");
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
   ).matches;
+
+  const taglineEl = document.getElementById("tagline");
+  if (taglineEl && !prefersReducedMotion) {
+    typeOnce(taglineEl);
+  }
+
+  const radarBlips = document.getElementById("radarBlips");
   if (radarBlips && !prefersReducedMotion) {
     startRadarBlips(radarBlips);
   }
