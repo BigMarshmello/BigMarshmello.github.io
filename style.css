@@ -54,11 +54,6 @@ h1, h2, h3, p {
   --color-accent-text: #a35d00;
   --color-blip: #ff3b30;
 
-  /* complementary "signal blue" — a second instrument-panel color for links/secondary
-     UI, so the whole site doesn't read as one flat amber wash */
-  --color-accent-2: #0369a1;
-  --color-accent-2-soft: #e0f2fe;
-
   /* per-section tints — subtle enough to stay "one accent color", distinct enough to read as separate panels while scrolling */
   --color-section-hero: #f6f7fb;
   --color-section-about: #ffffff;
@@ -227,7 +222,7 @@ h1, h2, h3, p {
 }
 
 .nav-link:hover {
-  color: var(--color-accent-2);
+  color: var(--color-accent-text);
 }
 
 .nav-social {
@@ -245,7 +240,7 @@ h1, h2, h3, p {
 }
 
 .icon-link:hover {
-  color: var(--color-accent-2);
+  color: var(--color-accent-text);
   transform: translateY(-1px);
 }
 
@@ -441,7 +436,7 @@ h1, h2, h3, p {
 }
 
 .tagline {
-  color: var(--color-accent-2);
+  color: var(--color-accent-text);
   font-family: var(--font-mono);
   font-weight: 600;
   margin-top: var(--space-1);
@@ -530,8 +525,8 @@ h1, h2, h3, p {
 }
 
 .btn-secondary:hover {
-  border-color: var(--color-accent-2);
-  color: var(--color-accent-2);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 /* =====================================================================
@@ -573,14 +568,14 @@ h1, h2, h3, p {
 }
 
 .filter-btn:hover {
-  border-color: var(--color-accent-2);
-  color: var(--color-accent-2);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
 }
 
 .filter-btn.is-active {
-  border-color: var(--color-accent-2);
-  background: var(--color-accent-2-soft);
-  color: var(--color-accent-2);
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
 }
 
 .project-grid {
@@ -674,8 +669,8 @@ h1, h2, h3, p {
 }
 
 .tag {
-  background: var(--color-accent-2-soft);
-  color: var(--color-accent-2);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
   font-family: var(--font-mono);
   font-size: 0.78rem;
   font-weight: 600;
@@ -712,12 +707,6 @@ h1, h2, h3, p {
   opacity: 0.55;
 }
 
-/* Python <-> MATLAB — the "software" pair, in the complementary blue so the
-   diagram reads as hardware (amber) vs. software (blue) at a glance */
-.pcb-trace--alt {
-  stroke: var(--color-accent-2);
-}
-
 .pcb-hub {
   fill: var(--color-bg);
   stroke: var(--color-accent);
@@ -728,10 +717,6 @@ h1, h2, h3, p {
   fill: var(--color-accent);
   offset-distance: 0%;
   animation: pcb-pulse-travel 3.4s linear infinite;
-}
-
-.pcb-pulse--alt {
-  fill: var(--color-accent-2);
 }
 
 @keyframes pcb-pulse-travel {
@@ -782,7 +767,7 @@ h1, h2, h3, p {
 }
 
 .skill-point:hover .skill-label {
-  fill: var(--color-accent-2);
+  fill: var(--color-accent-text);
 }
 
 .visually-hidden {
@@ -951,7 +936,7 @@ h1, h2, h3, p {
   font-family: var(--font-mono);
   font-size: 1.5rem;
   font-weight: 700;
-  color: var(--color-accent-2);
+  color: var(--color-accent-text);
   margin-top: var(--space-2);
   letter-spacing: 0.02em;
 }
