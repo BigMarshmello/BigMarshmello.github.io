@@ -16,7 +16,15 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
   <!-- ============================= NAV ============================= -->
   <header class="site-header">
     <nav class="navbar" aria-label="Primary">
-      <a href="#top" class="nav-logo"><!-- PLACEHOLDER: replace with your name or initials/logo --> Alex Hillman</a>
+      <a href="#top" class="nav-logo">
+        <svg class="brand-mark" viewBox="0 0 32 32" width="20" height="20" aria-hidden="true">
+          <circle cx="16" cy="16" r="14" fill="none" stroke="var(--color-accent)" stroke-width="2" />
+          <circle cx="16" cy="16" r="8" fill="none" stroke="var(--color-accent)" stroke-width="1" opacity="0.5" />
+          <path d="M16,16 L16,2 A14,14 0 0,1 26.9,7.1 Z" fill="var(--color-accent)" fill-opacity="0.35" />
+          <circle cx="21" cy="11" r="1.6" fill="var(--color-blip)" />
+        </svg>
+        Alex Hillman
+      </a>
 
       <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">
         <span class="hamburger"></span>
@@ -54,7 +62,15 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
           <img src="img/profile.jpg" alt="Alex Hillman" class="profile-photo">
         </div>
         <div class="hero-text">
-          <h1>Alex Hillman</h1>
+          <h1>
+            <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+              <circle cx="16" cy="16" r="14" fill="none" stroke="var(--color-accent)" stroke-width="2" />
+              <circle cx="16" cy="16" r="8" fill="none" stroke="var(--color-accent)" stroke-width="1" opacity="0.5" />
+              <path d="M16,16 L16,2 A14,14 0 0,1 26.9,7.1 Z" fill="var(--color-accent)" fill-opacity="0.35" />
+              <circle cx="21" cy="11" r="1.6" fill="var(--color-blip)" />
+            </svg>
+            Alex Hillman
+          </h1>
           <p class="tagline" id="tagline">Final year Electrical &amp; Computer Engineering student at UCT</p>
           <p class="hero-intro">
             
@@ -107,8 +123,7 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
           <!-- PROJECT CARD TEMPLATE 1 — duplicate this <article> block to add more projects. data-category values must match a filter button's data-filter above; separate multiple with a space. -->
           <article class="project-card" data-category="embedded radar">
             <div class="project-image">
-              <!-- PLACEHOLDER: replace with <img src="img/project1.png" alt="Project 1 screenshot"> -->
-              <div class="image-placeholder" aria-hidden="true">Image</div>
+              <img src="img/project1.jpg" alt="Radar-driven interactive LED cube screenshot" class="project-photo">
             </div>
             <div class="project-body">
               <h3 class="project-title">Radar-Driven Interactive LED CUBE</h3>

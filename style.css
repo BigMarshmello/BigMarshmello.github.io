@@ -128,9 +128,16 @@ h1, h2, h3, p {
 }
 
 .nav-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
   font-weight: 700;
   font-size: 1.1rem;
   letter-spacing: -0.01em;
+}
+
+.brand-mark {
+  flex-shrink: 0;
 }
 
 .nav-toggle {
@@ -411,9 +418,17 @@ h1, h2, h3, p {
 }
 
 .hero-text h1 {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
   font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.02em;
+}
+
+.hero-text h1 .brand-mark {
+  width: 34px;
+  height: 34px;
 }
 
 .tagline {
