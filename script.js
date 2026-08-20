@@ -59,6 +59,99 @@ function startTypewriterLoop(el) {
   tick();
 }
 
+// Custom radar-blip cursor + throttled ping trail. Skipped entirely on
+// touch/no-hover devices and when the user prefers reduced motion.
+function initCustomCursor() {
+  const noHover = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (noHover || prefersReducedMotion) return;
+
+  const INTERACTIVE_SELECTOR = "a, button, .filter-btn, .skill-point";
+  const BLIP_INTERVAL = 120; // ms between trail blips while moving
+
+  const dot = document.createElement("div");
+  dot.className = "cursor-dot";
+  dot.setAttribute("aria-hidden", "true");
+  document.body.appendChild(dot);
+  document.body.classList.add("custom-cursor-active");
+
+  let mouseX = 0;
+  let mouseY = 0;
+  let rafScheduled = false;
+  let lastBlipTime = 0;
+
+  function updateDotPosition() {
+    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+    rafScheduled = false;
+  }
+
+  function spawnTrailBlip(x, y) {
+    const blip = document.createElement("span");
+    blip.className = "cursor-trail-blip";
+    blip.style.left = x + "px";
+    blip.style.top = y + "px";
+    blip.addEventListener("animationend", () => blip.remove());
+    document.body.appendChild(blip);
+  }
+
+  window.addEventListener(
+    "mousemove",
+    (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
+      if (!rafScheduled) {
+        rafScheduled = true;
+        requestAnimationFrame(updateDotPosition);
+      }
+
+      const now = performance.now();
+      if (now - lastBlipTime > BLIP_INTERVAL) {
+        lastBlipTime = now;
+        spawnTrailBlip(mouseX, mouseY);
+      }
+    },
+    { passive: true }
+  );
+
+  document.addEventListener("mouseover", (e) => {
+    dot.classList.toggle("cursor-dot--hover", !!e.target.closest(INTERACTIVE_SELECTOR));
+  });
+}
+
+// Slim fixed bar at the top of the viewport that fills as the user scrolls down.
+function initScrollProgress() {
+  const bar = document.createElement("div");
+  bar.className = "scroll-progress-bar";
+  bar.setAttribute("aria-hidden", "true");
+  document.body.appendChild(bar);
+
+  let ticking = false;
+
+  function update() {
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const docHeight =
+      document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    bar.style.width = pct + "%";
+    ticking = false;
+  }
+
+  window.addEventListener(
+    "scroll",
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    },
+    { passive: true }
+  );
+
+  update();
+}
+
 // Mobile nav toggle + smooth-scroll close-on-click + footer year.
 document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.getElementById("navToggle");
@@ -115,4 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (radarBlips && !prefersReducedMotion) {
     startRadarBlips(radarBlips);
   }
+
+  initCustomCursor();
+  initScrollProgress();
 });
