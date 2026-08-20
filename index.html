@@ -234,51 +234,56 @@ I'm characterizing the chamber's hydrodynamics — pressure gradients under diff
 
         <!--
           PLACEHOLDER: edit/reorder skills below. There are 6 fixed points around the
-          circle (one every 60°, starting at the top and going clockwise). Each skill
-          needs a <g class="skill-point"> with a dot + a label. For a label longer than
-          one short word, split it across two <tspan> lines like "Embedded Systems"
-          below so it doesn't run into its neighbor. The plain <ul> further down is a
-          screen-reader-only fallback list — keep it in sync with the chart.
+          hexagon (one every 60°, starting at the top and going clockwise), wired up
+          as a little circuit board: a thin hexagon outline (the board edge), three
+          traces crossing through a central hub (the connections between related
+          skills), and small pulses that travel along those traces. Each skill needs
+          a <g class="skill-point"> with a pad (rect) + a label. For a label longer
+          than one short word, split it across two <tspan> lines like "Embedded
+          Systems" below so it doesn't run into its neighbor. If you change which
+          skills are diagonally opposite each other, update the three .pcb-trace
+          paths and .pcb-pulse offset-paths below to match. The plain <ul> further
+          down is a screen-reader-only fallback list — keep it in sync with the chart.
         -->
         <svg class="skills-radar" viewBox="0 0 400 400" role="img" aria-label="Skills: C, Python, Verilog, Embedded Systems, MATLAB, Circuit Design">
-          <circle class="radar-grid-ring" cx="200" cy="200" r="37" />
-          <circle class="radar-grid-ring" cx="200" cy="200" r="74" />
-          <circle class="radar-grid-ring" cx="200" cy="200" r="110" />
+          <path class="pcb-outline" d="M200,90 L295.26,145 L295.26,255 L200,310 L104.74,255 L104.74,145 Z" />
 
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="200" y2="90" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="295.26" y2="145" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="295.26" y2="255" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="200" y2="310" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="104.74" y2="255" />
-          <line class="radar-grid-spoke" x1="200" y1="200" x2="104.74" y2="145" />
+          <!-- traces connecting related skills, routed through the central hub -->
+          <path class="pcb-trace" d="M200,90 L200,310" />
+          <path class="pcb-trace" d="M295.26,145 L104.74,255" />
+          <path class="pcb-trace" d="M295.26,255 L104.74,145" />
 
-          <path class="skill-sweep" d="M200,200 L200,90 A110,110 0 0,1 251.6,102.9 Z" />
+          <circle class="pcb-pulse" r="3.5" style="offset-path: path('M200,90 L200,310'); animation-delay: 0s;" />
+          <circle class="pcb-pulse" r="3.5" style="offset-path: path('M295.26,145 L104.74,255'); animation-delay: 1.1s; animation-duration: 3.9s;" />
+          <circle class="pcb-pulse" r="3.5" style="offset-path: path('M295.26,255 L104.74,145'); animation-delay: 2.2s; animation-duration: 3.1s;" />
+
+          <rect class="pcb-hub" x="193" y="193" width="14" height="14" rx="2" />
 
           <g class="skill-point">
-            <circle class="skill-dot" cx="200" cy="90" r="5" />
+            <rect class="skill-dot" x="195" y="85" width="10" height="10" rx="2" />
             <text class="skill-label" x="200" y="54" text-anchor="middle">C</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="295.26" cy="145" r="5" />
+            <rect class="skill-dot" x="290.26" y="140" width="10" height="10" rx="2" />
             <text class="skill-label" x="319.5" y="131" text-anchor="start">Python</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="295.26" cy="255" r="5" />
+            <rect class="skill-dot" x="290.26" y="250" width="10" height="10" rx="2" />
             <text class="skill-label" x="319.5" y="269" text-anchor="start">Verilog</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="200" cy="310" r="5" />
+            <rect class="skill-dot" x="195" y="305" width="10" height="10" rx="2" />
             <text class="skill-label" x="200" y="338" text-anchor="middle">
               <tspan x="200" dy="0">Embedded</tspan>
               <tspan x="200" dy="15">Systems</tspan>
             </text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="104.74" cy="255" r="5" />
+            <rect class="skill-dot" x="99.74" y="250" width="10" height="10" rx="2" />
             <text class="skill-label" x="80.5" y="269" text-anchor="end">MATLAB</text>
           </g>
           <g class="skill-point">
-            <circle class="skill-dot" cx="104.74" cy="145" r="5" />
+            <rect class="skill-dot" x="99.74" y="140" width="10" height="10" rx="2" />
             <text class="skill-label" x="80.5" y="131" text-anchor="end">
               <tspan x="80.5" dy="0">Circuit</tspan>
               <tspan x="80.5" dy="15">Design</tspan>

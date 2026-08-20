@@ -694,34 +694,52 @@ h1, h2, h3, p {
   margin: 0 auto;
 }
 
-.radar-grid-ring {
+.pcb-outline {
   fill: none;
   stroke: var(--color-border);
-  stroke-width: 1;
+  stroke-width: 1.5;
 }
 
-.radar-grid-spoke {
-  stroke: var(--color-border);
-  stroke-width: 1;
+.pcb-trace {
+  fill: none;
+  stroke: var(--color-accent);
+  stroke-width: 2;
+  opacity: 0.55;
 }
 
-.skill-sweep {
+.pcb-hub {
+  fill: var(--color-bg);
+  stroke: var(--color-accent);
+  stroke-width: 1.5;
+}
+
+.pcb-pulse {
   fill: var(--color-accent);
-  fill-opacity: 0.18;
-  transform-box: view-box;
-  transform-origin: 200px 200px;
-  animation: skill-sweep-rotate 6s linear infinite;
+  offset-distance: 0%;
+  animation: pcb-pulse-travel 3.4s linear infinite;
 }
 
-@keyframes skill-sweep-rotate {
-  to {
-    transform: rotate(360deg);
+@keyframes pcb-pulse-travel {
+  0% {
+    offset-distance: 0%;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  92% {
+    opacity: 1;
+  }
+  100% {
+    offset-distance: 100%;
+    opacity: 0;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .skill-sweep {
+  .pcb-pulse {
     animation: none;
+    opacity: 0;
   }
 }
 
@@ -731,7 +749,9 @@ h1, h2, h3, p {
 
 .skill-dot {
   fill: var(--color-accent);
-  transition: r 0.15s ease, fill 0.15s ease;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: fill 0.15s ease, transform 0.15s ease;
 }
 
 .skill-label {
@@ -742,7 +762,7 @@ h1, h2, h3, p {
 }
 
 .skill-point:hover .skill-dot {
-  r: 7;
+  transform: scale(1.5);
   fill: var(--color-blip);
 }
 
