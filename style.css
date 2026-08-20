@@ -522,6 +522,37 @@ h1, h2, h3, p {
 /* =====================================================================
    7. PROJECTS
    ===================================================================== */
+.project-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-bottom: var(--space-3);
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-bg);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.filter-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.filter-btn.is-active {
+  border-color: var(--color-accent);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-text);
+}
+
 .project-grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -540,14 +571,20 @@ h1, h2, h3, p {
   overflow: hidden;
   background: var(--color-bg);
   box-shadow: var(--shadow);
-  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   display: flex;
   flex-direction: column;
 }
 
 .project-card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
+  border-color: var(--color-accent);
+  box-shadow: var(--shadow-hover), 0 0 0 1px var(--color-accent),
+    0 0 18px rgba(255, 176, 0, 0.35);
+  transform: translateY(-4px) scale(1.015) rotate(-0.35deg);
+}
+
+.project-card.is-hidden {
+  display: none;
 }
 
 .project-image {

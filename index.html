@@ -93,10 +93,18 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
         <h2 class="section-title">Projects</h2>
         <p class="section-subtitle">A few of the things I've built, broken, and eventually got working — in roughly that order.</p>
 
+        <!-- filter buttons: data-filter must match a data-category value on the cards below -->
+        <div class="project-filters" role="group" aria-label="Filter projects by category">
+          <button type="button" class="filter-btn is-active" data-filter="all">All</button>
+          <button type="button" class="filter-btn" data-filter="embedded">Embedded</button>
+          <button type="button" class="filter-btn" data-filter="radar">Radar</button>
+          <button type="button" class="filter-btn" data-filter="mechanical">Mechanical</button>
+        </div>
+
         <div class="project-grid">
 
-          <!-- PROJECT CARD TEMPLATE 1 — duplicate this <article> block to add more projects -->
-          <article class="project-card">
+          <!-- PROJECT CARD TEMPLATE 1 — duplicate this <article> block to add more projects. data-category values must match a filter button's data-filter above; separate multiple with a space. -->
+          <article class="project-card" data-category="embedded radar">
             <div class="project-image">
               <!-- PLACEHOLDER: replace with <img src="img/project1.png" alt="Project 1 screenshot"> -->
               <div class="image-placeholder" aria-hidden="true">Image</div>
@@ -129,19 +137,15 @@ The system was developed into an interactive movement-based game, where the cube
           </article>
 
           <!-- PROJECT CARD TEMPLATE 2 -->
-          <article class="project-card">
+          <article class="project-card" data-category="mechanical">
             <div class="project-image">
               <img src="img/project2.jpg" alt="CORRAL benthic chamber enclosure screenshot" class="project-photo">
             </div>
             <div class="project-body">
               <h3 class="project-title">CORRAL — Benthic Chamber Enclosure Redesign & Buoy Housing System</h3>
-              <p class="project-desc">As part of a four-person engineering team at UCT, I designed, analysed, and built the enclosure subsystem for CORRAL — an autonomous dissolved-oxygen monitoring platform deployed in the Langebaan Lagoon intertidal zone to study sand prawn bioturbation.
+              <p class="project-desc">As part of a four-person engineering team at UCT, I redesigned the enclosure subsystem for CORRAL — an autonomous dissolved-oxygen monitoring platform deployed in the Langebaan Lagoon intertidal zone. The original chamber required tools and several minutes to deploy, impractical within a narrow tidal window, so I replaced the bolted lid with a tool-free bayonet closure and dual O-ring seal, validated by hand calculations and a Fusion 360 FEA that caught a stiffness failure the hand calcs missed.
 
-The existing research instrument required tools, single-use consumables, and several minutes to deploy, making reliable field operation impractical for a single operator working within a narrow tidal window. I redesigned the benthic chamber lid system from scratch: replacing the bolted foam-gasket arrangement with a tool-free bayonet closure, a dual O-ring sealing system, and a separable modular end cap with interchangeable cable glands. I performed five hand calculations covering hydrostatic pressure, plate bending, lug shear, O-ring seal sizing, and chamber wall stress, and validated these with a finite element analysis in Fusion 360 that identified a stiffness failure the hand calculations missed — the end cap was deflecting 3.1 mm under pressure, unseating the face seal. A sensitivity analysis established that increasing the end-cap thickness to 2.0 mm resolves this. I also designed a mushroom-geometry surface buoy to house the topside electronics, running a full MATLAB stability analysis including GZ curve generation and sensitivity sweeps across electronics mass, water density, and component placement.
-
-The prototype was FDM printed in PLA, physically tested, and the results reported honestly — the radial seal passed; the face seal leaked due to three identified prototype limitations, each with a defined corrective action for the next iteration.
-
-I built this because the gap between a working sensor and a deployable field instrument is almost always an engineering problem, not a science problem — and solving that gap is what makes the measurement repeatable.</p>
+The prototype was FDM printed and field-tested: the radial seal passed, the face seal leaked, and I documented the root causes with corrective actions for the next iteration.</p>
               <ul class="tech-tags">
                 <li class="tag">FEA</li>
                 <li class="tag">CAD</li>
@@ -159,25 +163,20 @@ I built this because the gap between a working sensor and a deployable field ins
           </article>
 
           <!-- PROJECT CARD TEMPLATE 3 -->
-          <article class="project-card">
+          <article class="project-card" data-category="embedded">
             <div class="project-image">
               <img src="img/project3.jpg" alt="TheShiftRosterBot screenshot" class="project-photo">
             </div>
             <div class="project-body">
               <h3 class="project-title">TheShiftRosterBot: A Multi-Tenant Scheduling Platform for Delivery Operations</h3>
-              <p class="project-desc">I built and operate a production Telegram-based scheduling system for a delivery operation I manage in Cape Town, coordinating shifts for 30+ drivers across two independently-configured business branches.
+              <p class="project-desc">I built and operate a production Telegram-based scheduling system for a delivery operation I manage in Cape Town, coordinating shifts for 30+ drivers across two independently-configured branches. The bot (Python, SQLite, running on a Raspberry Pi) handles shift submission, live coverage tracking, first-come-first-served claiming, cover requests, and admin approvals — replacing manual scheduling with no audit trail.
 
-Before this system, scheduling was manual — no visibility into coverage gaps, no fair enforcement of shift rules, no audit trail. I built a bot (Python, SQLite, running on a Raspberry Pi) that handles driver self-service shift submission, live coverage tracking, first-come-first-served shift claiming, cover requests, automated reminders, and admin tooling for approvals and exports.
-
-The main technical challenge came when I took on a second branch with fundamentally different rules — a different rostering cycle, different thresholds, and drivers picking specific dates instead of a weekly pattern. Rather than duplicate the codebase, I redesigned the system into a multi-tenant architecture: one application serving multiple branches, each with its own database and configurable ruleset, sharing a common scheduling engine. This meant extracting core logic into pure, tested functions and generalising concepts I'd originally hardcoded for a single use case.
-
-As the system matured, I adopted stronger engineering practices: staged and independently testable migrations, a shared test suite to catch logic drift between the main bot and a companion checklist bot, a full architectural review to find and fix security and data-integrity issues, and proper deployment discipline (version control, scripted deploys with verification, automated backups) after diagnosing incidents caused by uncertainty about what code was actually live.
-
-I built this because I run the operation myself and needed tooling that matched real business needs rather than a rigid off-the-shelf product — and because scaling it correctly to a second branch became a genuine exercise in production software engineering, not just a scripting project.</p>
+When I took on a second branch with entirely different scheduling rules, I redesigned the system into a multi-tenant architecture: one application serving multiple branches, each with its own database and ruleset, sharing a common engine. As it matured I added tested migrations, a shared test suite, and proper deployment discipline after diagnosing incidents caused by uncertainty about what code was live.</p>
               <ul class="tech-tags">
-                <li class="tag">[Tech]</li>
-                <li class="tag">[Tech]</li>
-                <li class="tag">[Tech]</li>
+                <li class="tag">Python</li>
+                <li class="tag">SQLite</li>
+                <li class="tag">Telegram Bot API</li>
+                <li class="tag">Raspberry Pi</li>
               </ul>
               <div class="project-links">
                 <a href="#" class="icon-link" aria-label="View source on GitHub" target="_blank" rel="noopener noreferrer">
@@ -191,19 +190,19 @@ I built this because I run the operation myself and needed tooling that matched 
           </article>
 
           <!-- PROJECT CARD TEMPLATE 4 -->
-          <article class="project-card">
+          <article class="project-card" data-category="mechanical">
             <div class="project-image">
               <img src="img/project4.jpg" alt="Benthic chamber project screenshot" class="project-photo">
             </div>
             <div class="project-body">
               <h3 class="project-title">Quantifying Bioturbation-Driven Oxygen Flux in Permeable Sediments: Hydrodynamic Characterization & Field Validation of a Novel Benthic Chamber</h3>
-              <p class="project-desc">Building on my previous redesign of the CORRAL benthic chamber enclosure, I am now investigating the hydrodynamic performance of the chamber and its ability to distinguish between diffusive and advective oxygen fluxes in permeable intertidal sediments. The scientific motivation is grounded in a fundamental gap in benthic biogeochemistry: standard chambers, validated for muddy cohesive sediments where diffusion dominates (Tengberg et al., 2004, 2005), fail in permeable sands because they destroy the horizontal pressure gradients that drive advective porewater flow—a mechanism first quantified by Huettel & Gust (1992), who showed that natural bioroughness creates pressure gradients of 0–3.6 Pa, enhancing solute exchange by up to 7×. Glud (2008) further established that fauna-mediated O₂ uptake can account for >50% of total oxygen flux in coastal sediments, yet the relative contributions of passive advection (driven by burrow topography) versus active irrigation (driven by animal pumping) remain poorly constrained—particularly for sand prawns (Trypaea australiensis) in South African intertidal ecosystems.
+              <p class="project-desc">Building on my earlier redesign of the CORRAL benthic chamber, I'm now investigating its hydrodynamic performance — specifically its ability to distinguish diffusive from advective oxygen flux in permeable intertidal sediments. Standard benthic chambers are validated for muddy, diffusion-dominated sediments and fail in permeable sands, where they destroy the pressure gradients that drive porewater flow through the seabed.
 
-I am addressing this by systematically characterizing the hydrodynamic properties of the chamber: quantifying the pressure gradients generated by different stirrer configurations (vertical vs. horizontal), determining the Diffusive Boundary Layer (DBL) thickness using the alabaster dissolution method (Santschi et al., 1991), and validating water mixing efficiency via dye tracing. The chamber operates in two distinct modes—a "nonadvective" setting where only diffusion and bioirrigation occur, and an "advective" setting where stirrer-induced pressure gradients drive porewater flow—allowing direct quantification of the advective flux component as the difference between Total Oxygen Uptake (TOU, measured via chamber incubations) and Diffusive Oxygen Uptake (DOU, inferred from microprofiles). This approach, first demonstrated by Janssen et al. (2005) in a laboratory flume system, has never been applied in a South African intertidal context with live sand prawns. Field deployments in Langebaan Lagoon will compare oxygen fluxes across four treatments: defaunated sediment (baseline microbial respiration), sediment with surface topography only (passive advection), sediment with live sand prawns (active + passive), and sediment with relict burrows (passive flushing through abandoned tubes). By integrating engineering validation with ecological measurement, this work aims to resolve the relative contributions of passive and active bioturbation to benthic oxygen exchange, providing both a validated field instrument and new mechanistic insight into the role of sand prawns as ecosystem engineers in permeable coastal sediments.</p>
+I'm characterizing the chamber's hydrodynamics — pressure gradients under different stirrer configurations, boundary-layer thickness, and mixing efficiency — then using it in two modes (diffusion-only vs. advection-enabled) to isolate the advective flux component. Field deployments in Langebaan Lagoon will compare oxygen fluxes across defaunated sediment, surface topography alone, live sand prawns, and relict burrows, to resolve how much of benthic oxygen exchange sand prawns drive as ecosystem engineers.</p>
               <ul class="tech-tags">
-                <li class="tag">[Tech]</li>
-                <li class="tag">[Tech]</li>
-                <li class="tag">[Tech]</li>
+                <li class="tag">Hydrodynamics</li>
+                <li class="tag">Benthic Chamber Design</li>
+                <li class="tag">Field Instrumentation</li>
               </ul>
               <div class="project-links">
                 <a href="#" class="icon-link" aria-label="View source on GitHub" target="_blank" rel="noopener noreferrer">

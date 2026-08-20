@@ -23,18 +23,40 @@ function startRadarBlips(container) {
   })();
 }
 
-// Types out the tagline's existing text once, character by character.
-function typeOnce(el, speed = 45) {
+// Types out the tagline's existing text, holds, deletes, then retypes — looping forever.
+function startTypewriterLoop(el) {
   const text = el.textContent;
-  el.textContent = "";
+  const TYPE_SPEED = 45;
+  const DELETE_SPEED = 25;
+  const HOLD_TIME = 1800;
+  const GAP_TIME = 400;
+
   let i = 0;
-  (function tick() {
-    i++;
-    el.textContent = text.slice(0, i);
-    if (i < text.length) {
-      setTimeout(tick, speed);
+  let deleting = false;
+
+  function tick() {
+    if (!deleting) {
+      i++;
+      el.textContent = text.slice(0, i);
+      if (i === text.length) {
+        deleting = true;
+        setTimeout(tick, HOLD_TIME);
+        return;
+      }
+      setTimeout(tick, TYPE_SPEED);
+    } else {
+      i--;
+      el.textContent = text.slice(0, i);
+      if (i === 0) {
+        deleting = false;
+        setTimeout(tick, GAP_TIME);
+        return;
+      }
+      setTimeout(tick, DELETE_SPEED);
     }
-  })();
+  }
+
+  tick();
 }
 
 // Mobile nav toggle + smooth-scroll close-on-click + footer year.
@@ -67,7 +89,26 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const taglineEl = document.getElementById("tagline");
   if (taglineEl && !prefersReducedMotion) {
-    typeOnce(taglineEl);
+    startTypewriterLoop(taglineEl);
+  }
+
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const projectCards = document.querySelectorAll(".project-card");
+
+  if (filterButtons.length && projectCards.length) {
+    filterButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const filter = btn.dataset.filter;
+
+        filterButtons.forEach((b) => b.classList.toggle("is-active", b === btn));
+
+        projectCards.forEach((card) => {
+          const categories = (card.dataset.category || "").split(" ");
+          const show = filter === "all" || categories.includes(filter);
+          card.classList.toggle("is-hidden", !show);
+        });
+      });
+    });
   }
 
   const radarBlips = document.getElementById("radarBlips");
