@@ -73,15 +73,16 @@ h1, h2, h3, p {
   --color-section-skills: #0f141c;
   --color-section-contact: #131009;
   --color-grid-dot: rgba(255, 176, 0, 0.06);
-  --color-radar-ring: rgba(255, 176, 0, 0.10);
-  --color-radar-sweep: rgba(255, 176, 0, 0.20);
+  /* the radar instrument is intentionally its own color — real radar/sonar
+     scopes are classically green phosphor, distinct from an amber
+     oscilloscope trace. Everything else on the site stays amber. */
+  --color-radar-ring: rgba(51, 255, 119, 0.10);
   /* phosphor persistence ramp: the leading edge is hot and pale, and the trail
-     cools through amber -> orange -> deep red as it decays, the way CRT
-     phosphor actually fades (brightness AND hue, not brightness alone) */
-  --radar-hot: rgba(255, 226, 158, 0.55);
-  --radar-trail-near: rgba(255, 176, 0, 0.32);
-  --radar-trail-mid: rgba(255, 128, 12, 0.16);
-  --radar-trail-far: rgba(255, 76, 20, 0.05);
+     dims through vivid green -> deep green -> near-black as it decays */
+  --radar-hot: rgba(214, 255, 226, 0.55);
+  --radar-trail-near: rgba(51, 255, 119, 0.32);
+  --radar-trail-mid: rgba(24, 200, 90, 0.16);
+  --radar-trail-far: rgba(10, 120, 60, 0.05);
   --color-card-glow: rgba(255, 176, 0, 0.35);
   --color-scanline: rgba(0, 0, 0, 0.28);
 
@@ -130,14 +131,13 @@ h1, h2, h3, p {
   --color-section-skills: #f3f5f8;
   --color-section-contact: #f8f4ec;
   --color-grid-dot: rgba(163, 93, 0, 0.08);
-  --color-radar-ring: rgba(163, 93, 0, 0.10);
-  --color-radar-sweep: rgba(255, 176, 0, 0.20);
-  /* same phosphor ramp, pulled back for a light background where a bright
-     pale leading edge would otherwise disappear into the page */
-  --radar-hot: rgba(214, 138, 0, 0.42);
-  --radar-trail-near: rgba(255, 176, 0, 0.26);
-  --radar-trail-mid: rgba(255, 128, 12, 0.14);
-  --radar-trail-far: rgba(214, 64, 16, 0.05);
+  /* same green-phosphor radar as dark, pulled back so it doesn't vanish
+     against a light page */
+  --color-radar-ring: rgba(21, 128, 61, 0.10);
+  --radar-hot: rgba(20, 140, 70, 0.42);
+  --radar-trail-near: rgba(34, 197, 94, 0.26);
+  --radar-trail-mid: rgba(21, 128, 61, 0.14);
+  --radar-trail-far: rgba(6, 78, 41, 0.05);
   --color-card-glow: rgba(255, 176, 0, 0.35);
   --color-scanline: rgba(0, 0, 0, 0.05);
 
