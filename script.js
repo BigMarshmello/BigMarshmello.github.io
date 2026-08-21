@@ -165,11 +165,13 @@ function initGutterMarkers() {
   markerForSection.forEach((_, section) => observer.observe(section));
 }
 
-// Drifting radar contacts in the side gutters (Stage 2 of the gutter radar
-// scene). Canvas rather than DOM nodes, specifically so the trail can be
-// drawn as a cheap per-frame alpha fade instead of spawning/removing many
-// trail elements. Skipped entirely under prefers-reduced-motion — Stage 1's
-// static rings are left as the only visual, per the brief.
+// Drifting radar contacts + rotating sweep in the side gutters (Stages 2-3
+// of the gutter radar scene). Canvas rather than DOM nodes, specifically so
+// the trail can be drawn as a cheap per-frame alpha fade instead of
+// spawning/removing many trail elements, and so the sweep can be a real
+// conic gradient rotating in sync with hit-testing against the blips.
+// Skipped entirely under prefers-reduced-motion — Stage 1's static rings
+// are left as the only visual, per the brief.
 function initGutterRadarBlips() {
   const prefersReducedMotion = window.matchMedia(
     "(prefers-reduced-motion: reduce)"
@@ -190,11 +192,54 @@ function initGutterRadarBlips() {
   const FADE_SECONDS = 1.2; // fade in on spawn, fade out before despawn
   const TRAIL_ERASE_ALPHA = 0.14; // higher = shorter trail
   const EDGE_MARGIN = 15;
+  const TWO_PI = Math.PI * 2;
+
+  // Stage 3: sweep + ping-on-contact
+  const SWEEP_PERIOD = 6; // seconds — matches the hero radar's rotation
+  const ANGULAR_SPEED = TWO_PI / SWEEP_PERIOD;
+  const PING_FLASH_DURATION = 1.0; // how long the contact itself stays brightened
+  const PING_LABEL_DURATION = 1.8; // must match the CSS animation duration below
+  const supportsConicGradient =
+    typeof CanvasRenderingContext2D !== "undefined" &&
+    "createConicGradient" in CanvasRenderingContext2D.prototype;
+
+  // Same --radar-* tokens the hero sweep uses, re-read whenever the theme
+  // toggle flips data-theme (via the MutationObserver below) so this stays
+  // in sync without polling getComputedStyle every frame.
+  function readRadarColors() {
+    const cs = getComputedStyle(document.documentElement);
+    return {
+      hot: cs.getPropertyValue("--radar-hot").trim(),
+      near: cs.getPropertyValue("--radar-trail-near").trim(),
+      mid: cs.getPropertyValue("--radar-trail-mid").trim(),
+      far: cs.getPropertyValue("--radar-trail-far").trim(),
+    };
+  }
+
+  let radarColors = readRadarColors();
+  if (supportsConicGradient) {
+    new MutationObserver(() => {
+      radarColors = readRadarColors();
+    }).observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme"],
+    });
+  }
 
   const wideQuery = window.matchMedia("(min-width: 1200px)");
 
   function makeBlip() {
-    return { x: 0, y: 0, angle: 0, speed: 0, state: "in", stateT: 0, activeDuration: 0, opacity: 0 };
+    return {
+      x: 0,
+      y: 0,
+      angle: 0,
+      speed: 0,
+      state: "in",
+      stateT: 0,
+      activeDuration: 0,
+      opacity: 0,
+      pingT: null,
+    };
   }
 
   function resetBlip(blip, width, height) {
@@ -208,6 +253,7 @@ function initGutterRadarBlips() {
     blip.state = "in";
     blip.stateT = 0;
     blip.opacity = 0;
+    blip.pingT = null;
   }
 
   const scenes = Array.from(gutterEls).map((gutter) => {
@@ -215,7 +261,17 @@ function initGutterRadarBlips() {
     canvas.className = "gutter-radar-canvas";
     gutter.appendChild(canvas);
     const blips = Array.from({ length: BLIPS_PER_GUTTER }, makeBlip);
-    return { gutter, canvas, ctx: canvas.getContext("2d"), width: 0, height: 0, blips };
+    return {
+      gutter,
+      canvas,
+      ctx: canvas.getContext("2d"),
+      width: 0,
+      height: 0,
+      blips,
+      side: gutter.classList.contains("gutter-radar--left") ? "left" : "right",
+      // random starting phase so the two gutters don't sweep in lockstep
+      sweepAngle: Math.random() * TWO_PI,
+    };
   });
 
   function resizeScene(scene) {
@@ -231,21 +287,85 @@ function initGutterRadarBlips() {
     scene.blips.forEach((blip) => resetBlip(blip, scene.width, scene.height));
   }
 
+  function originOf(scene) {
+    return { x: scene.side === "left" ? 0 : scene.width, y: scene.height / 2 };
+  }
+
+  // Fills the whole canvas with a conic gradient using the same color ramp
+  // and stop positions as the hero's CSS sweep (hot leading edge at the
+  // current angle, decaying trail behind it, transparent everywhere else) —
+  // so most of the canvas is untouched and only the swept band is visible.
+  function drawSweep(scene) {
+    const { ctx, width, height } = scene;
+    const origin = originOf(scene);
+    const gradient = ctx.createConicGradient(scene.sweepAngle, origin.x, origin.y);
+    gradient.addColorStop(0, "transparent");
+    gradient.addColorStop(0.694, "transparent");
+    gradient.addColorStop(0.778, radarColors.far);
+    gradient.addColorStop(0.875, radarColors.mid);
+    gradient.addColorStop(0.958, radarColors.near);
+    gradient.addColorStop(1, radarColors.hot);
+    ctx.fillStyle = gradient;
+    ctx.fillRect(0, 0, width, height);
+  }
+
+  function triggerPing(scene, blip) {
+    blip.pingT = 0;
+
+    const letter = String.fromCharCode(65 + Math.floor(Math.random() * 26));
+    const number = 1 + Math.floor(Math.random() * 9);
+    const label = document.createElement("span");
+    label.className = "gutter-ping-label";
+    label.textContent = `${letter}-${number}`;
+
+    // bias the label toward whichever side of the gutter has more room, so
+    // it's less likely to sit right at the clipped edge of the container
+    if (blip.x < scene.width / 2) {
+      label.style.left = blip.x + 8 + "px";
+    } else {
+      label.style.right = scene.width - blip.x + 8 + "px";
+    }
+    label.style.top = Math.max(0, blip.y - 8) + "px";
+
+    // belt-and-suspenders: animationend should fire, but a stray label left
+    // behind forever if it somehow doesn't is worse than a redundant timer
+    const removeTimer = setTimeout(
+      () => label.remove(),
+      PING_LABEL_DURATION * 1000 + 200
+    );
+    label.addEventListener("animationend", () => {
+      clearTimeout(removeTimer);
+      label.remove();
+    });
+    scene.gutter.appendChild(label);
+  }
+
   function drawBlip(ctx, blip) {
+    const pingBoost =
+      blip.pingT === null ? 0 : Math.max(0, 1 - blip.pingT / PING_FLASH_DURATION);
+    const alpha = Math.min(1, blip.opacity * BASE_OPACITY + pingBoost * 0.4);
+    const scale = 1 + pingBoost * 0.6;
+
     ctx.save();
     ctx.translate(blip.x, blip.y);
     ctx.rotate(blip.angle + Math.PI / 2);
+    ctx.scale(scale, scale);
     ctx.beginPath();
     ctx.moveTo(0, -6);
     ctx.lineTo(4, 5);
     ctx.lineTo(-4, 5);
     ctx.closePath();
-    ctx.fillStyle = `rgba(${ACCENT_RGB}, ${(blip.opacity * BASE_OPACITY).toFixed(3)})`;
+    ctx.fillStyle = `rgba(${ACCENT_RGB}, ${alpha.toFixed(3)})`;
     ctx.fill();
     ctx.restore();
   }
 
   function updateBlip(blip, dt, width, height) {
+    if (blip.pingT !== null) {
+      blip.pingT += dt;
+      if (blip.pingT >= PING_FLASH_DURATION) blip.pingT = null;
+    }
+
     blip.x += blip.speed * Math.cos(blip.angle) * dt;
     blip.y += blip.speed * Math.sin(blip.angle) * dt;
     blip.stateT += dt;
@@ -298,6 +418,27 @@ function initGutterRadarBlips() {
       ctx.fillStyle = `rgba(0, 0, 0, ${TRAIL_ERASE_ALPHA})`;
       ctx.fillRect(0, 0, width, height);
       ctx.globalCompositeOperation = "source-over";
+
+      if (supportsConicGradient) {
+        const prevSweepAngle = scene.sweepAngle;
+        scene.sweepAngle += ANGULAR_SPEED * dt;
+        drawSweep(scene);
+
+        const origin = originOf(scene);
+        scene.blips.forEach((blip) => {
+          if (blip.state === "active" && blip.pingT === null) {
+            const blipAngle = Math.atan2(blip.y - origin.y, blip.x - origin.x);
+            // find whichever "lap" of the blip's angle is nearest the sweep's
+            // current (ever-increasing, unwrapped) angle, then check whether
+            // the sweep crossed exactly that point this frame
+            const laps = Math.round((scene.sweepAngle - blipAngle) / TWO_PI);
+            const blipEquivAngle = blipAngle + laps * TWO_PI;
+            if (blipEquivAngle >= prevSweepAngle && blipEquivAngle < scene.sweepAngle) {
+              triggerPing(scene, blip);
+            }
+          }
+        });
+      }
 
       scene.blips.forEach((blip) => {
         updateBlip(blip, dt, width, height);

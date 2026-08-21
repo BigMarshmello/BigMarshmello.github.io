@@ -1271,6 +1271,40 @@ body.custom-cursor-active * {
   pointer-events: none;
 }
 
+/* Stage 3: "coordinate" label that appears briefly when the sweep passes a
+   contact. JS positions it with an inline left/top (or right/top); duration
+   here must match PING_LABEL_DURATION in script.js. Clipped by .gutter-radar's
+   overflow: hidden if it would otherwise sit outside the gutter, so it can
+   never visually spill onto real content. */
+.gutter-ping-label {
+  position: absolute;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  color: var(--color-accent-text);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  animation: gutter-ping-label-fade 1.8s ease-out forwards;
+}
+
+@keyframes gutter-ping-label-fade {
+  0% {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  75% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
 /* range rings, centered just off the outer edge of the viewport so what's
    visible in the gutter reads as arcs curving in toward the content — like
    the edge of a much larger radar face that continues off-screen */
