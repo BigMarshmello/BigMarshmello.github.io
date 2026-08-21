@@ -46,7 +46,7 @@ function initCustomCursor() {
   ).matches;
   if (noHover || prefersReducedMotion) return;
 
-  const INTERACTIVE_SELECTOR = "a, button, .filter-btn, .skill-point";
+  const INTERACTIVE_SELECTOR = "a, button, .filter-btn";
 
   const dot = document.createElement("div");
   dot.className = "cursor-dot";
@@ -82,7 +82,7 @@ function initCustomCursor() {
 }
 
 // Fades + slides each section's content up into place as it enters the
-// viewport. Grouped items (project cards, skill points) get a small
+// viewport. Grouped items (project cards, skill bars) get a small
 // incremental delay so they cascade in rather than popping simultaneously.
 function initScrollReveal() {
   const prefersReducedMotion = window.matchMedia(
@@ -113,7 +113,8 @@ function initScrollReveal() {
   ]);
   addGroup(Array.from(document.querySelectorAll(".project-card")));
   addGroup([document.querySelector(".skills .section-title")]);
-  addGroup(Array.from(document.querySelectorAll(".skill-point")));
+  addGroup(Array.from(document.querySelectorAll(".skill-group-title")));
+  addGroup(Array.from(document.querySelectorAll(".skill-fill")));
   addGroup([
     document.querySelector(".contact .section-title"),
     document.querySelector(".contact .section-subtitle"),
