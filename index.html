@@ -58,7 +58,19 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
 
     <!-- ============================= HERO ============================= -->
     <section class="hero" id="hero">
-      <div class="radar-blips" id="radarBlips" aria-hidden="true"></div>
+      <!--
+        Static radar contacts. Each blip's animation-delay is (its clock angle
+        from 12 o'clock / 360) * 6s, matching the sweep's 6s period, so it
+        lights up exactly as the beam crosses it. Moving a blip means
+        recomputing both its left/top and its delay together.
+      -->
+      <div class="radar-blips" aria-hidden="true">
+        <span class="radar-contact" style="left: 67.2%; top: 25.4%; animation-delay: 0.58s;"></span>
+        <span class="radar-contact" style="left: 68.9%; top: 51.7%; animation-delay: 1.58s;"></span>
+        <span class="radar-contact" style="left: 57.1%; top: 83.3%; animation-delay: 2.80s;"></span>
+        <span class="radar-contact" style="left: 31.1%; top: 64.8%; animation-delay: 3.87s;"></span>
+        <span class="radar-contact" style="left: 18.0%; top: 31.5%; animation-delay: 5.00s;"></span>
+      </div>
       <div class="hero-content">
         <div class="hero-photo">
           <img src="img/profile.jpg" alt="Alex Hillman" class="profile-photo">

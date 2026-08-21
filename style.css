@@ -75,6 +75,13 @@ h1, h2, h3, p {
   --color-grid-dot: rgba(255, 176, 0, 0.06);
   --color-radar-ring: rgba(255, 176, 0, 0.10);
   --color-radar-sweep: rgba(255, 176, 0, 0.20);
+  /* phosphor persistence ramp: the leading edge is hot and pale, and the trail
+     cools through amber -> orange -> deep red as it decays, the way CRT
+     phosphor actually fades (brightness AND hue, not brightness alone) */
+  --radar-hot: rgba(255, 226, 158, 0.55);
+  --radar-trail-near: rgba(255, 176, 0, 0.32);
+  --radar-trail-mid: rgba(255, 128, 12, 0.16);
+  --radar-trail-far: rgba(255, 76, 20, 0.05);
   --color-card-glow: rgba(255, 176, 0, 0.35);
   --color-scanline: rgba(0, 0, 0, 0.28);
 
@@ -125,6 +132,12 @@ h1, h2, h3, p {
   --color-grid-dot: rgba(163, 93, 0, 0.08);
   --color-radar-ring: rgba(163, 93, 0, 0.10);
   --color-radar-sweep: rgba(255, 176, 0, 0.20);
+  /* same phosphor ramp, pulled back for a light background where a bright
+     pale leading edge would otherwise disappear into the page */
+  --radar-hot: rgba(214, 138, 0, 0.42);
+  --radar-trail-near: rgba(255, 176, 0, 0.26);
+  --radar-trail-mid: rgba(255, 128, 12, 0.14);
+  --radar-trail-far: rgba(214, 64, 16, 0.05);
   --color-card-glow: rgba(255, 176, 0, 0.35);
   --color-scanline: rgba(0, 0, 0, 0.05);
 
@@ -350,7 +363,9 @@ h1, h2, h3, p {
   background-color: var(--color-section-hero);
 }
 
-/* radar grid rings, centered behind the hero content — also reused by the 404 page */
+/* radar scope face: concentric range rings + crosshair axes, centered behind
+   the hero content — also reused by the 404 page. All three are background
+   layers on one pseudo-element (crosshairs painted over the rings). */
 .hero::before,
 .error-hero::before {
   content: "";
@@ -361,17 +376,37 @@ h1, h2, h3, p {
   height: 640px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: repeating-radial-gradient(
-    circle,
-    var(--color-radar-ring) 0,
-    var(--color-radar-ring) 1px,
-    transparent 1px,
-    transparent 64px
-  );
+  background-image:
+    /* vertical crosshair axis */
+    linear-gradient(
+      to right,
+      transparent calc(50% - 0.5px),
+      var(--color-radar-ring) calc(50% - 0.5px),
+      var(--color-radar-ring) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    /* horizontal crosshair axis */
+    linear-gradient(
+      to bottom,
+      transparent calc(50% - 0.5px),
+      var(--color-radar-ring) calc(50% - 0.5px),
+      var(--color-radar-ring) calc(50% + 0.5px),
+      transparent calc(50% + 0.5px)
+    ),
+    /* concentric range rings */
+    repeating-radial-gradient(
+      circle,
+      var(--color-radar-ring) 0,
+      var(--color-radar-ring) 1px,
+      transparent 1px,
+      transparent 80px
+    );
   pointer-events: none;
 }
 
-/* rotating radar sweep beam */
+/* rotating sweep with phosphor persistence: a sharp hot leading edge at 360deg
+   (which wraps straight into transparent at 0deg, so nothing is painted ahead
+   of the beam) trailing ~110deg of decaying glow behind it. */
 .hero::after,
 .error-hero::after {
   content: "";
@@ -384,12 +419,59 @@ h1, h2, h3, p {
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    var(--color-radar-sweep),
-    transparent 10%,
-    transparent 100%
+    transparent 0deg,
+    transparent 250deg,
+    var(--radar-trail-far) 280deg,
+    var(--radar-trail-mid) 315deg,
+    var(--radar-trail-near) 345deg,
+    var(--radar-hot) 360deg
   );
   animation: radar-sweep 6s linear infinite;
   pointer-events: none;
+}
+
+/* Static contacts on the scope face. Each shares the sweep's 6s period and is
+   delayed by (its angle / 360) * 6s, so it lights exactly as the beam crosses
+   it, then decays like phosphor. Positions/delays are set inline per blip. */
+.radar-contact {
+  position: absolute;
+  width: 7px;
+  height: 7px;
+  margin: -3.5px 0 0 -3.5px;
+  border-radius: 50%;
+  background: var(--color-blip);
+  opacity: 0;
+  animation: radar-contact-glow 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes radar-contact-glow {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  2% {
+    opacity: 1;
+    transform: scale(1.35);
+  }
+  12% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  45% {
+    opacity: 0.12;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1);
+  }
+}
+
+/* Parked when the hero scrolls out of view (class toggled by
+   IntersectionObserver) so no compositor work happens off-screen. */
+.radar-idle::after,
+.radar-idle .radar-contact {
+  animation-play-state: paused;
 }
 
 @keyframes radar-sweep {
@@ -403,6 +485,12 @@ h1, h2, h3, p {
   .error-hero::after {
     animation: none;
   }
+
+  /* leave the contacts painted at a steady low glow rather than pulsing */
+  .radar-contact {
+    animation: none;
+    opacity: 0.4;
+  }
 }
 
 @media (max-width: 767px) {
@@ -415,7 +503,7 @@ h1, h2, h3, p {
   }
 }
 
-/* container holding randomly-spawned radar-ping blips, sized to match the sweep circle */
+/* contact layer, sized to match the sweep circle so blip coordinates line up */
 .radar-blips {
   position: absolute;
   top: 50%;
@@ -430,33 +518,6 @@ h1, h2, h3, p {
   .radar-blips {
     width: 420px;
     height: 420px;
-  }
-}
-
-.radar-blip {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  margin: -4px 0 0 -4px;
-  border-radius: 50%;
-  background: var(--color-blip);
-  animation: radar-ping 1.8s ease-out forwards;
-}
-
-@keyframes radar-ping {
-  0% {
-    transform: scale(0.3);
-    opacity: 0;
-    box-shadow: 0 0 0 0 rgba(255, 59, 48, 0.55);
-  }
-  12% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: scale(1);
-    box-shadow: 0 0 0 16px rgba(255, 59, 48, 0);
   }
 }
 

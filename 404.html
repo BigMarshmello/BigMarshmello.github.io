@@ -12,7 +12,12 @@
 
   <main class="error-hero" id="hero">
     <div class="noise-overlay" aria-hidden="true"></div>
-    <div class="radar-blips" id="radarBlips" aria-hidden="true"></div>
+    <!-- static radar contacts; delays match the 6s sweep (see index.html) -->
+    <div class="radar-blips" aria-hidden="true">
+      <span class="radar-contact" style="left: 67.2%; top: 25.4%; animation-delay: 0.58s;"></span>
+      <span class="radar-contact" style="left: 57.1%; top: 83.3%; animation-delay: 2.80s;"></span>
+      <span class="radar-contact" style="left: 18.0%; top: 31.5%; animation-delay: 5.00s;"></span>
+    </div>
 
     <div class="error-content">
       <p class="error-code">404</p>

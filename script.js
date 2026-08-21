@@ -1,26 +1,23 @@
-// Randomly spawns "radar ping" blips inside the hero's radar-sweep circle.
-function spawnRadarBlip(container) {
-  const blip = document.createElement("span");
-  blip.className = "radar-blip";
+// The radar sweep and its contacts are pure CSS animations. This parks them
+// (animation-play-state: paused, via the .radar-idle class) whenever the hero
+// is off-screen, so no compositor work happens while the user reads further
+// down the page. Without an observer the animation keeps ticking forever.
+function initRadarVisibility() {
+  const hero = document.querySelector(".hero, .error-hero");
+  if (!hero) return;
 
-  // random point within a circle (sqrt keeps the distribution uniform, not center-heavy)
-  const angle = Math.random() * Math.PI * 2;
-  const radius = Math.sqrt(Math.random()) * 48; // % from center, stays inside the ring
-  blip.style.left = 50 + radius * Math.cos(angle) + "%";
-  blip.style.top = 50 + radius * Math.sin(angle) + "%";
+  if (!("IntersectionObserver" in window)) return; // animation just runs as normal
 
-  blip.addEventListener("animationend", () => blip.remove());
-  container.appendChild(blip);
-}
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        hero.classList.toggle("radar-idle", !entry.isIntersecting);
+      });
+    },
+    { threshold: 0 }
+  );
 
-function startRadarBlips(container) {
-  (function scheduleNext() {
-    const delay = 700 + Math.random() * 1600;
-    setTimeout(() => {
-      spawnRadarBlip(container);
-      scheduleNext();
-    }, delay);
-  })();
+  observer.observe(hero);
 }
 
 // Types out the tagline's existing text, holds, deletes, then retypes — looping forever.
@@ -291,12 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const radarBlips = document.getElementById("radarBlips");
-  if (radarBlips && !prefersReducedMotion) {
-    startRadarBlips(radarBlips);
-  }
-
   initThemeToggle();
+  initRadarVisibility();
   initCustomCursor();
   initScrollProgress();
   initScrollReveal();
