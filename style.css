@@ -1224,3 +1224,66 @@ body.custom-cursor-active * {
     transition: none;
   }
 }
+
+/* =====================================================================
+   17. GUTTER RADAR SCENE — STAGE 1 (static layer only)
+   ===================================================================== */
+/* Width is fluid — always exactly the leftover margin outside the 1100px
+   content column — rather than a fixed px box, so it can never overlap
+   content at any viewport width, including right at the 1200px breakpoint
+   (where the margin is only ~50px per side). */
+.gutter-radar {
+  display: none;
+  position: fixed;
+  top: 0;
+  height: 100vh;
+  width: calc((100vw - var(--max-width)) / 2);
+  overflow: hidden;
+  pointer-events: none;
+  /* below .gutter-markers (5) so labels stay legible on top; below the
+     sticky header (100), which will naturally cover the top of this layer
+     while scrolled, same as it covers page content */
+  z-index: 2;
+}
+
+.gutter-radar--left {
+  left: 0;
+}
+
+.gutter-radar--right {
+  right: 0;
+}
+
+.gutter-radar-rings {
+  position: absolute;
+  inset: 0;
+}
+
+/* range rings, centered just off the outer edge of the viewport so what's
+   visible in the gutter reads as arcs curving in toward the content — like
+   the edge of a much larger radar face that continues off-screen */
+.gutter-radar--left .gutter-radar-rings {
+  background-image: repeating-radial-gradient(
+    circle at 0% 50%,
+    var(--color-radar-ring) 0,
+    var(--color-radar-ring) 1px,
+    transparent 1px,
+    transparent 48px
+  );
+}
+
+.gutter-radar--right .gutter-radar-rings {
+  background-image: repeating-radial-gradient(
+    circle at 100% 50%,
+    var(--color-radar-ring) 0,
+    var(--color-radar-ring) 1px,
+    transparent 1px,
+    transparent 48px
+  );
+}
+
+@media (min-width: 1200px) {
+  .gutter-radar {
+    display: block;
+  }
+}
