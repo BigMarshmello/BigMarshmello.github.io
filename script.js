@@ -20,44 +20,25 @@ function initRadarVisibility() {
   observer.observe(hero);
 }
 
-// Types out the tagline's existing text, holds, deletes, then retypes — looping forever.
-function startTypewriterLoop(el) {
+// Types out the tagline's existing text once on load, then leaves it alone.
+// Deliberately does NOT loop: the tagline is the page's primary identifying
+// line, and a type/delete cycle left it unreadable most of the time.
+function typeTaglineOnce(el) {
   const text = el.textContent;
   const TYPE_SPEED = 45;
-  const DELETE_SPEED = 25;
-  const HOLD_TIME = 1800;
-  const GAP_TIME = 400;
 
   let i = 0;
-  let deleting = false;
+  el.textContent = "";
 
-  function tick() {
-    if (!deleting) {
-      i++;
-      el.textContent = text.slice(0, i);
-      if (i === text.length) {
-        deleting = true;
-        setTimeout(tick, HOLD_TIME);
-        return;
-      }
-      setTimeout(tick, TYPE_SPEED);
-    } else {
-      i--;
-      el.textContent = text.slice(0, i);
-      if (i === 0) {
-        deleting = false;
-        setTimeout(tick, GAP_TIME);
-        return;
-      }
-      setTimeout(tick, DELETE_SPEED);
-    }
-  }
-
-  tick();
+  (function tick() {
+    i++;
+    el.textContent = text.slice(0, i);
+    if (i < text.length) setTimeout(tick, TYPE_SPEED);
+  })();
 }
 
-// Custom radar-blip cursor + throttled ping trail. Skipped entirely on
-// touch/no-hover devices and when the user prefers reduced motion.
+// Custom crosshair cursor. Skipped entirely on touch/no-hover devices and when
+// the user prefers reduced motion.
 function initCustomCursor() {
   const noHover = window.matchMedia("(hover: none), (pointer: coarse)").matches;
   const prefersReducedMotion = window.matchMedia(
@@ -66,7 +47,6 @@ function initCustomCursor() {
   if (noHover || prefersReducedMotion) return;
 
   const INTERACTIVE_SELECTOR = "a, button, .filter-btn, .skill-point";
-  const BLIP_INTERVAL = 120; // ms between trail blips while moving
 
   const dot = document.createElement("div");
   dot.className = "cursor-dot";
@@ -77,20 +57,10 @@ function initCustomCursor() {
   let mouseX = 0;
   let mouseY = 0;
   let rafScheduled = false;
-  let lastBlipTime = 0;
 
   function updateDotPosition() {
     dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
     rafScheduled = false;
-  }
-
-  function spawnTrailBlip(x, y) {
-    const blip = document.createElement("span");
-    blip.className = "cursor-trail-blip";
-    blip.style.left = x + "px";
-    blip.style.top = y + "px";
-    blip.addEventListener("animationend", () => blip.remove());
-    document.body.appendChild(blip);
   }
 
   window.addEventListener(
@@ -102,12 +72,6 @@ function initCustomCursor() {
         rafScheduled = true;
         requestAnimationFrame(updateDotPosition);
       }
-
-      const now = performance.now();
-      if (now - lastBlipTime > BLIP_INTERVAL) {
-        lastBlipTime = now;
-        spawnTrailBlip(mouseX, mouseY);
-      }
     },
     { passive: true }
   );
@@ -115,38 +79,6 @@ function initCustomCursor() {
   document.addEventListener("mouseover", (e) => {
     dot.classList.toggle("cursor-dot--hover", !!e.target.closest(INTERACTIVE_SELECTOR));
   });
-}
-
-// Slim fixed bar at the top of the viewport that fills as the user scrolls down.
-function initScrollProgress() {
-  const bar = document.createElement("div");
-  bar.className = "scroll-progress-bar";
-  bar.setAttribute("aria-hidden", "true");
-  document.body.appendChild(bar);
-
-  let ticking = false;
-
-  function update() {
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const docHeight =
-      document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const pct = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    bar.style.width = pct + "%";
-    ticking = false;
-  }
-
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (!ticking) {
-        ticking = true;
-        requestAnimationFrame(update);
-      }
-    },
-    { passive: true }
-  );
-
-  update();
 }
 
 // Fades + slides each section's content up into place as it enters the
@@ -294,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const taglineEl = document.getElementById("tagline");
   if (taglineEl && !prefersReducedMotion) {
-    startTypewriterLoop(taglineEl);
+    typeTaglineOnce(taglineEl);
   }
 
   const filterButtons = document.querySelectorAll(".filter-btn");
@@ -320,6 +252,5 @@ document.addEventListener("DOMContentLoaded", () => {
   initGutterMarkers();
   initRadarVisibility();
   initCustomCursor();
-  initScrollProgress();
   initScrollReveal();
 });
