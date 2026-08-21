@@ -20,21 +20,37 @@ function initRadarVisibility() {
   observer.observe(hero);
 }
 
-// Types out the tagline's existing text once on load, then leaves it alone.
-// Deliberately does NOT loop: the tagline is the page's primary identifying
-// line, and a type/delete cycle left it unreadable most of the time.
-function typeTaglineOnce(el) {
+// Types out the tagline's existing text, holds it fully typed for a while,
+// then clears and types it again — forever. Deliberately does NOT animate a
+// character-by-character delete: an earlier version did, and the delete
+// phase left the tagline incomplete/unreadable for roughly as long as the
+// hold phase kept it complete. Clearing instantly keeps the "hard to read"
+// window down to one short gap per cycle instead of a whole backspacing pass.
+function startTypewriterLoop(el) {
   const text = el.textContent;
   const TYPE_SPEED = 45;
+  const HOLD_TIME = 2800; // fully-typed pause before clearing
+  const RESET_GAP = 400; // blank pause before retyping
 
   let i = 0;
-  el.textContent = "";
 
-  (function tick() {
+  function typeTick() {
     i++;
     el.textContent = text.slice(0, i);
-    if (i < text.length) setTimeout(tick, TYPE_SPEED);
-  })();
+    if (i < text.length) {
+      setTimeout(typeTick, TYPE_SPEED);
+    } else {
+      setTimeout(resetAndRetype, HOLD_TIME);
+    }
+  }
+
+  function resetAndRetype() {
+    el.textContent = "";
+    i = 0;
+    setTimeout(typeTick, RESET_GAP);
+  }
+
+  typeTick();
 }
 
 // Custom crosshair cursor. Skipped entirely on touch/no-hover devices and when
@@ -510,7 +526,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const taglineEl = document.getElementById("tagline");
   if (taglineEl && !prefersReducedMotion) {
-    typeTaglineOnce(taglineEl);
+    startTypewriterLoop(taglineEl);
   }
 
   const filterButtons = document.querySelectorAll(".filter-btn");
