@@ -165,6 +165,215 @@ function initGutterMarkers() {
   markerForSection.forEach((_, section) => observer.observe(section));
 }
 
+// Drifting radar contacts in the side gutters (Stage 2 of the gutter radar
+// scene). Canvas rather than DOM nodes, specifically so the trail can be
+// drawn as a cheap per-frame alpha fade instead of spawning/removing many
+// trail elements. Skipped entirely under prefers-reduced-motion — Stage 1's
+// static rings are left as the only visual, per the brief.
+function initGutterRadarBlips() {
+  const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+  ).matches;
+  if (prefersReducedMotion) return;
+
+  const gutterEls = document.querySelectorAll(".gutter-radar");
+  if (!gutterEls.length) return;
+
+  // Matches --color-accent in style.css (#ffb000), which is identical in
+  // both themes — canvas fillStyle can't read a CSS custom property, so this
+  // has to be hardcoded. Update both together if the accent color changes.
+  const ACCENT_RGB = "255, 176, 0";
+  const BASE_OPACITY = 0.55; // even at full brightness, stays subtle
+  const BLIPS_PER_GUTTER = 2;
+  const MIN_SPEED = 4; // px/s — slow, understated drift
+  const MAX_SPEED = 8;
+  const FADE_SECONDS = 1.2; // fade in on spawn, fade out before despawn
+  const TRAIL_ERASE_ALPHA = 0.14; // higher = shorter trail
+  const EDGE_MARGIN = 15;
+
+  const wideQuery = window.matchMedia("(min-width: 1200px)");
+
+  function makeBlip() {
+    return { x: 0, y: 0, angle: 0, speed: 0, state: "in", stateT: 0, activeDuration: 0, opacity: 0 };
+  }
+
+  function resetBlip(blip, width, height) {
+    const fromTop = Math.random() < 0.5;
+    blip.x = Math.random() * width;
+    blip.y = fromTop ? -EDGE_MARGIN : height + EDGE_MARGIN;
+    const skew = Math.random() * 0.8 - 0.4; // +/- ~23 degrees off straight vertical
+    const dir = fromTop ? 1 : -1; // travel down if spawned at top, up if spawned at bottom
+    blip.angle = (dir * Math.PI) / 2 + skew;
+    blip.speed = MIN_SPEED + Math.random() * (MAX_SPEED - MIN_SPEED);
+    blip.state = "in";
+    blip.stateT = 0;
+    blip.opacity = 0;
+  }
+
+  const scenes = Array.from(gutterEls).map((gutter) => {
+    const canvas = document.createElement("canvas");
+    canvas.className = "gutter-radar-canvas";
+    gutter.appendChild(canvas);
+    const blips = Array.from({ length: BLIPS_PER_GUTTER }, makeBlip);
+    return { gutter, canvas, ctx: canvas.getContext("2d"), width: 0, height: 0, blips };
+  });
+
+  function resizeScene(scene) {
+    const rect = scene.gutter.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    scene.width = rect.width;
+    scene.height = rect.height;
+    scene.canvas.width = Math.max(1, Math.round(rect.width * dpr));
+    scene.canvas.height = Math.max(1, Math.round(rect.height * dpr));
+    scene.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    // a fresh/resized canvas has no trail history to erase, and blip
+    // positions were relative to the old size — just start them over
+    scene.blips.forEach((blip) => resetBlip(blip, scene.width, scene.height));
+  }
+
+  function drawBlip(ctx, blip) {
+    ctx.save();
+    ctx.translate(blip.x, blip.y);
+    ctx.rotate(blip.angle + Math.PI / 2);
+    ctx.beginPath();
+    ctx.moveTo(0, -6);
+    ctx.lineTo(4, 5);
+    ctx.lineTo(-4, 5);
+    ctx.closePath();
+    ctx.fillStyle = `rgba(${ACCENT_RGB}, ${(blip.opacity * BASE_OPACITY).toFixed(3)})`;
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function updateBlip(blip, dt, width, height) {
+    blip.x += blip.speed * Math.cos(blip.angle) * dt;
+    blip.y += blip.speed * Math.sin(blip.angle) * dt;
+    blip.stateT += dt;
+
+    if (blip.state === "in") {
+      blip.opacity = Math.min(1, blip.stateT / FADE_SECONDS);
+      if (blip.stateT >= FADE_SECONDS) {
+        blip.state = "active";
+        blip.stateT = 0;
+        blip.activeDuration = 20 + Math.random() * 15;
+      }
+      return;
+    }
+
+    const outOfBounds =
+      blip.x < -EDGE_MARGIN ||
+      blip.x > width + EDGE_MARGIN ||
+      blip.y < -EDGE_MARGIN ||
+      blip.y > height + EDGE_MARGIN;
+
+    if (blip.state === "active") {
+      blip.opacity = 1;
+      if (outOfBounds || blip.stateT >= blip.activeDuration) {
+        blip.state = "out";
+        blip.stateT = 0;
+      }
+      return;
+    }
+
+    // state === "out"
+    blip.opacity = Math.max(0, 1 - blip.stateT / FADE_SECONDS);
+    if (blip.stateT >= FADE_SECONDS) {
+      resetBlip(blip, width, height);
+    }
+  }
+
+  let rafId = null;
+  let lastTime = null;
+
+  function frame(now) {
+    if (lastTime === null) lastTime = now;
+    // clamp dt so a backgrounded/throttled tab doesn't cause a giant jump in
+    // blip position the instant the loop resumes
+    const dt = Math.min(0.1, (now - lastTime) / 1000);
+    lastTime = now;
+
+    scenes.forEach((scene) => {
+      const { ctx, width, height } = scene;
+      ctx.globalCompositeOperation = "destination-out";
+      ctx.fillStyle = `rgba(0, 0, 0, ${TRAIL_ERASE_ALPHA})`;
+      ctx.fillRect(0, 0, width, height);
+      ctx.globalCompositeOperation = "source-over";
+
+      scene.blips.forEach((blip) => {
+        updateBlip(blip, dt, width, height);
+        drawBlip(ctx, blip);
+      });
+    });
+
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function start() {
+    if (rafId !== null) return;
+    lastTime = null;
+    rafId = requestAnimationFrame(frame);
+  }
+
+  function stop() {
+    if (rafId !== null) {
+      cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+  }
+
+  // Three independent reasons to pause: the tab isn't visible, the viewport
+  // has narrowed below where the gutters even render, or the user has
+  // scrolled down into the footer (past all real content, so there's
+  // nothing left for the radar scene to sit beside).
+  let tabHidden = document.hidden;
+  let tooNarrow = !wideQuery.matches;
+  let footerVisible = false;
+
+  function syncRunning() {
+    if (tabHidden || tooNarrow || footerVisible) {
+      stop();
+    } else {
+      start();
+    }
+  }
+
+  document.addEventListener("visibilitychange", () => {
+    tabHidden = document.hidden;
+    syncRunning();
+  });
+
+  wideQuery.addEventListener("change", (e) => {
+    tooNarrow = !e.matches;
+    if (!tooNarrow) scenes.forEach(resizeScene);
+    syncRunning();
+  });
+
+  window.addEventListener(
+    "resize",
+    () => {
+      if (!tooNarrow) scenes.forEach(resizeScene);
+    },
+    { passive: true }
+  );
+
+  const footer = document.querySelector(".site-footer");
+  if (footer && "IntersectionObserver" in window) {
+    const footerObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          footerVisible = entry.isIntersecting;
+        });
+        syncRunning();
+      },
+      { threshold: 0 }
+    );
+    footerObserver.observe(footer);
+  }
+
+  scenes.forEach(resizeScene);
+  syncRunning();
+}
+
 // Theme toggle. Dark is the CSS default (bare :root), so light is opt-in via a
 // data-theme attribute on <html>. The choice is held in a plain variable for
 // the life of the page — deliberately NOT localStorage/sessionStorage — so it
@@ -250,6 +459,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   initThemeToggle();
   initGutterMarkers();
+  initGutterRadarBlips();
   initRadarVisibility();
   initCustomCursor();
   initScrollReveal();

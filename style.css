@@ -1259,6 +1259,18 @@ body.custom-cursor-active * {
   inset: 0;
 }
 
+/* Stage 2: drifting contact blips. JS-appended (only when JS runs and
+   prefers-reduced-motion is off), sized to its own bitmap via canvas.width/
+   height in script.js — this just makes the element fill its container. */
+.gutter-radar-canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
 /* range rings, centered just off the outer edge of the viewport so what's
    visible in the gutter reads as arcs curving in toward the content — like
    the edge of a much larger radar face that continues off-screen */
