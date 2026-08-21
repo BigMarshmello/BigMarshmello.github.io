@@ -208,6 +208,37 @@ function initScrollReveal() {
   targets.forEach((el) => observer.observe(el));
 }
 
+// Theme toggle. Dark is the CSS default (bare :root), so light is opt-in via a
+// data-theme attribute on <html>. The choice is held in a plain variable for
+// the life of the page — deliberately NOT localStorage/sessionStorage — so it
+// resets to dark on reload.
+function initThemeToggle() {
+  const btn = document.getElementById("themeToggle");
+  if (!btn) return;
+
+  let theme = "dark";
+
+  function apply() {
+    if (theme === "light") {
+      document.documentElement.setAttribute("data-theme", "light");
+    } else {
+      document.documentElement.removeAttribute("data-theme");
+    }
+    btn.textContent = theme === "dark" ? "[DARK]" : "[LIGHT]";
+    btn.setAttribute(
+      "aria-label",
+      theme === "dark" ? "Switch to light theme" : "Switch to dark theme"
+    );
+  }
+
+  btn.addEventListener("click", () => {
+    theme = theme === "dark" ? "light" : "dark";
+    apply();
+  });
+
+  apply();
+}
+
 // Mobile nav toggle + smooth-scroll close-on-click + footer year.
 document.addEventListener("DOMContentLoaded", () => {
   const navToggle = document.getElementById("navToggle");
@@ -265,6 +296,7 @@ document.addEventListener("DOMContentLoaded", () => {
     startRadarBlips(radarBlips);
   }
 
+  initThemeToggle();
   initCustomCursor();
   initScrollProgress();
   initScrollReveal();

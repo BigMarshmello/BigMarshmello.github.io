@@ -41,26 +41,42 @@ h1, h2, h3, p {
 /* =====================================================================
    1. DESIGN TOKENS
    ===================================================================== */
+/* DARK IS THE DEFAULT THEME. The light palette lives in the
+   [data-theme="light"] block below and is applied by the nav toggle. Because
+   dark is defined on bare :root, the page still renders correctly dark if JS
+   never runs. */
 :root {
-  --color-bg: #ffffff;
-  --color-bg-alt: #f7f8fa;
-  --color-text: #1a1d23;
-  --color-text-muted: #5b6270;
-  --color-border: #e4e6ea;
+  --color-bg: #0d1117;
+  --color-bg-alt: #111720;
+  /* elevated surfaces (cards, buttons) sit lighter than the page on dark,
+     where a drop shadow alone reads as nothing */
+  --color-surface: #161b22;
+  --color-text: #e6edf3;
+  --color-text-muted: #9aa4b2; /* 7.5:1 on --color-bg */
+  --color-border: #2a313c;
   --color-accent: #ffb000;
-  --color-accent-hover: #e6a000;
-  --color-accent-soft: #fff4e0;
-  /* darker on-brand amber for text on light backgrounds — #ffb000 itself fails WCAG contrast as text */
-  --color-accent-text: #a35d00;
-  --color-blip: #ff3b30;
+  --color-accent-hover: #ffc233;
+  --color-accent-soft: #2a1f08;
+  /* on dark, raw amber clears 10:1 as text, so no darkened variant is needed */
+  --color-accent-text: #ffb000;
+  --color-blip: #ff5c52;
+  /* ink for text sitting ON the amber accent — amber stays amber in both
+     themes, so this stays dark in both themes (9.2:1) */
+  --color-on-accent: #1a1d23;
+
+  --color-header-bg: rgba(13, 17, 23, 0.92);
 
   /* per-section tints — subtle enough to stay "one accent color", distinct enough to read as separate panels while scrolling */
-  --color-section-hero: #f6f7fb;
-  --color-section-about: #ffffff;
-  --color-section-projects: #fbf7ef;
-  --color-section-skills: #f3f5f8;
-  --color-section-contact: #f8f4ec;
-  --color-grid-dot: rgba(163, 93, 0, 0.08);
+  --color-section-hero: #0f141c;
+  --color-section-about: #0d1117;
+  --color-section-projects: #131009;
+  --color-section-skills: #0f141c;
+  --color-section-contact: #131009;
+  --color-grid-dot: rgba(255, 176, 0, 0.06);
+  --color-radar-ring: rgba(255, 176, 0, 0.10);
+  --color-radar-sweep: rgba(255, 176, 0, 0.20);
+  --color-card-glow: rgba(255, 176, 0, 0.35);
+  --color-scanline: rgba(0, 0, 0, 0.28);
 
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
@@ -69,14 +85,51 @@ h1, h2, h3, p {
 
   --max-width: 1100px;
   --radius: 10px;
-  --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
-  --shadow-hover: 0 4px 14px rgba(16, 24, 40, 0.10);
+  /* deeper and larger than the light-theme shadows — soft grey shadows are
+     invisible against a near-black page */
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.55), 0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-hover: 0 6px 22px rgba(0, 0, 0, 0.65);
 
   --space-1: 0.5rem;
   --space-2: 1rem;
   --space-3: 1.5rem;
   --space-4: 2.5rem;
   --space-5: 4rem;
+}
+
+/* Light theme — applied by the nav toggle setting data-theme="light" on <html>.
+   Only colors are redefined here; spacing/typography/radius are theme-agnostic
+   and stay inherited from :root. */
+[data-theme="light"] {
+  --color-bg: #ffffff;
+  --color-bg-alt: #f7f8fa;
+  --color-surface: #ffffff;
+  --color-text: #1a1d23;
+  --color-text-muted: #5b6270; /* 6.4:1 on --color-bg */
+  --color-border: #e4e6ea;
+  --color-accent: #ffb000;
+  --color-accent-hover: #e6a000;
+  --color-accent-soft: #fff4e0;
+  /* darker on-brand amber for text on light backgrounds — #ffb000 itself fails WCAG contrast as text */
+  --color-accent-text: #a35d00;
+  --color-blip: #ff3b30;
+  --color-on-accent: #1a1d23;
+
+  --color-header-bg: rgba(255, 255, 255, 0.92);
+
+  --color-section-hero: #f6f7fb;
+  --color-section-about: #ffffff;
+  --color-section-projects: #fbf7ef;
+  --color-section-skills: #f3f5f8;
+  --color-section-contact: #f8f4ec;
+  --color-grid-dot: rgba(163, 93, 0, 0.08);
+  --color-radar-ring: rgba(163, 93, 0, 0.10);
+  --color-radar-sweep: rgba(255, 176, 0, 0.20);
+  --color-card-glow: rgba(255, 176, 0, 0.35);
+  --color-scanline: rgba(0, 0, 0, 0.05);
+
+  --shadow: 0 1px 3px rgba(16, 24, 40, 0.06), 0 1px 2px rgba(16, 24, 40, 0.04);
+  --shadow-hover: 0 4px 14px rgba(16, 24, 40, 0.10);
 }
 
 /* =====================================================================
@@ -120,7 +173,7 @@ h1, h2, h3, p {
   position: sticky;
   top: 0;
   z-index: 100;
-  background: rgba(255, 255, 255, 0.92);
+  background: var(--color-header-bg);
   backdrop-filter: saturate(180%) blur(8px);
   border-bottom: 1px solid var(--color-border);
 }
@@ -231,6 +284,25 @@ h1, h2, h3, p {
   margin-top: var(--space-2);
 }
 
+.theme-toggle {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: border-color 0.15s ease, color 0.15s ease;
+}
+
+.theme-toggle:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
 .icon-link {
   display: inline-flex;
   align-items: center;
@@ -291,8 +363,8 @@ h1, h2, h3, p {
   border-radius: 50%;
   background: repeating-radial-gradient(
     circle,
-    rgba(163, 93, 0, 0.10) 0,
-    rgba(163, 93, 0, 0.10) 1px,
+    var(--color-radar-ring) 0,
+    var(--color-radar-ring) 1px,
     transparent 1px,
     transparent 64px
   );
@@ -312,7 +384,7 @@ h1, h2, h3, p {
   border-radius: 50%;
   background: conic-gradient(
     from 0deg,
-    rgba(255, 176, 0, 0.20),
+    var(--color-radar-sweep),
     transparent 10%,
     transparent 100%
   );
@@ -511,7 +583,7 @@ h1, h2, h3, p {
 
 .btn-primary {
   background: var(--color-accent);
-  color: var(--color-text);
+  color: var(--color-on-accent);
 }
 
 .btn-primary:hover {
@@ -561,7 +633,7 @@ h1, h2, h3, p {
   padding: 0.45rem 1rem;
   border-radius: 999px;
   border: 1px solid var(--color-border);
-  background: var(--color-bg);
+  background: var(--color-surface);
   color: var(--color-text-muted);
   cursor: pointer;
   transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
@@ -601,7 +673,7 @@ h1, h2, h3, p {
   border: 1px solid var(--color-border);
   border-radius: var(--radius);
   overflow: hidden;
-  background: var(--color-bg);
+  background: var(--color-surface);
   box-shadow: var(--shadow);
   transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
   display: flex;
@@ -611,7 +683,7 @@ h1, h2, h3, p {
 .project-card:hover {
   border-color: var(--color-accent);
   box-shadow: var(--shadow-hover), 0 0 0 1px var(--color-accent),
-    0 0 18px rgba(255, 176, 0, 0.35);
+    0 0 18px var(--color-card-glow);
   transform: translateY(-4px) scale(1.015) rotate(-0.35deg);
 }
 
@@ -857,8 +929,8 @@ h1, h2, h3, p {
   inset: 0;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.05) 0px,
-    rgba(0, 0, 0, 0.05) 1px,
+    var(--color-scanline) 0px,
+    var(--color-scanline) 1px,
     transparent 1px,
     transparent 3px
   );
