@@ -1207,3 +1207,64 @@ body.custom-cursor-active * {
     transform: translateY(0);
   }
 }
+
+/* =====================================================================
+   16. GUTTER SECTION MARKERS
+   ===================================================================== */
+/* Hidden by default and only shown once the viewport is wide enough that the
+   left gutter can actually hold them. With 1100px of centered content, a ~50px
+   marker plus gap needs ~1248px of viewport before it stops being clipped —
+   hence 1280px rather than 1200px. */
+.gutter-markers {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .gutter-markers {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-3);
+    position: fixed;
+    top: 50%;
+    /* pin just outside the centered content column */
+    left: calc(50% - (var(--max-width) / 2) - 66px);
+    transform: translateY(-50%);
+    z-index: 5;
+    pointer-events: none;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    line-height: 1.35;
+    letter-spacing: 0.06em;
+  }
+}
+
+.gutter-marker {
+  color: var(--color-text-muted);
+  opacity: 0.18;
+  transition: opacity 0.3s ease, color 0.3s ease;
+}
+
+.gutter-marker.is-active {
+  color: var(--color-accent);
+  opacity: 0.55;
+}
+
+.gutter-num,
+.gutter-label {
+  display: block;
+}
+
+/* faint connector between markers so they read as one sequence */
+.gutter-marker:not(:last-child)::after {
+  content: "·";
+  display: block;
+  margin-top: var(--space-2);
+  opacity: 0.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gutter-marker {
+    transition: none;
+  }
+}

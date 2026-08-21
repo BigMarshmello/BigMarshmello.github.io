@@ -54,6 +54,26 @@ I’m Alex, an Electrical and Computer Engineering student at UCT interested in 
     </nav>
   </header>
 
+  <!--
+    Left-gutter section markers. Purely decorative: aria-hidden and
+    non-interactive, because the nav above already links to all four sections
+    and a screen reader shouldn't hear them twice. Hidden below 1280px.
+  -->
+  <div class="gutter-markers" aria-hidden="true">
+    <div class="gutter-marker" data-section="about">
+      <span class="gutter-num">[01]</span><span class="gutter-label">ABOUT</span>
+    </div>
+    <div class="gutter-marker" data-section="projects">
+      <span class="gutter-num">[02]</span><span class="gutter-label">PROJECTS</span>
+    </div>
+    <div class="gutter-marker" data-section="skills">
+      <span class="gutter-num">[03]</span><span class="gutter-label">SKILLS</span>
+    </div>
+    <div class="gutter-marker" data-section="contact">
+      <span class="gutter-num">[04]</span><span class="gutter-label">CONTACT</span>
+    </div>
+  </div>
+
   <main id="top">
 
     <!-- ============================= HERO ============================= -->

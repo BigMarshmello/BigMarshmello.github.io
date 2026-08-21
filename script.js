@@ -205,6 +205,34 @@ function initScrollReveal() {
   targets.forEach((el) => observer.observe(el));
 }
 
+// Highlights the left-gutter marker for whichever section is crossing the
+// middle of the viewport. The rootMargin collapses the observer's root to a
+// thin band at the vertical centre, so exactly one contiguous section is
+// "active" at a time (and none while the hero is centred, which is correct).
+function initGutterMarkers() {
+  const markers = document.querySelectorAll(".gutter-marker");
+  if (!markers.length || !("IntersectionObserver" in window)) return;
+
+  const markerForSection = new Map();
+  markers.forEach((marker) => {
+    const section = document.getElementById(marker.dataset.section);
+    if (section) markerForSection.set(section, marker);
+  });
+  if (!markerForSection.size) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        const marker = markerForSection.get(entry.target);
+        if (marker) marker.classList.toggle("is-active", entry.isIntersecting);
+      });
+    },
+    { rootMargin: "-45% 0px -45% 0px", threshold: 0 }
+  );
+
+  markerForSection.forEach((_, section) => observer.observe(section));
+}
+
 // Theme toggle. Dark is the CSS default (bare :root), so light is opt-in via a
 // data-theme attribute on <html>. The choice is held in a plain variable for
 // the life of the page — deliberately NOT localStorage/sessionStorage — so it
@@ -289,6 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   initThemeToggle();
+  initGutterMarkers();
   initRadarVisibility();
   initCustomCursor();
   initScrollProgress();
